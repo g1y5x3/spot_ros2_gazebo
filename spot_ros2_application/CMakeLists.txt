@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(ros_gz_example_application)
+project(spot_ros2_application)
 
 find_package(ament_cmake REQUIRED)
 

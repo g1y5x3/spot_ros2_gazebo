@@ -1,20 +1,19 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ros_gz_example_bringup</name>
+  <name>spot_ros2_bringup</name>
   <version>0.0.0</version>
-  <description>Contains launch files for the ros_gz_example project</description>
-  <maintainer email="michael@openrobotics.org">Michael Carroll</maintainer>
+  <description>Contains launch files for the spot_ros2_gazebo project</description>
+  <maintainer email="ygao@missouri.edu">Yixiang Gao</maintainer>
   <license>Apache 2.0</license>
-  <author>Michael Carroll</author>
-  <author>Dharini Dutia</author>
+  <author>Yixiang Gao</author>
 
   <depend>ros_gz</depend>
   <depend>sdformat_urdf</depend>
   <depend>joint_state_publisher_gui</depend>
 
-  <depend>ros_gz_example_description</depend>
-  <depend>ros_gz_example_gazebo</depend>
+  <depend>spot_ros2_description</depend>
+  <depend>spot_ros2_gazebo</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

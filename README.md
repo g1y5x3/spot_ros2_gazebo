@@ -1,5 +1,5 @@
-# ros_gz_project_template
-A template project integrating ROS 2 and Gazebo simulator.
+# spot_ros2_gazebo
+A ROS 2 Spot simulator using Gazebo for prototyping spot autonomous behaviors.
 
 ## Included packages
 

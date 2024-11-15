@@ -28,11 +28,11 @@
     </plugin>
     <plugin
       filename="BasicSystem"
-      name="ros_gz_example_gazebo::BasicSystem">
+      name="spot_ros2_gazebo::BasicSystem">
     </plugin>
     <plugin
       filename="FullSystem"
-      name="ros_gz_example_gazebo::FullSystem">
+      name="spot_ros2_gazebo::FullSystem">
     </plugin>
 
     <light name="sun" type="directional">
@@ -80,7 +80,7 @@
       <self_collide>true</self_collide>
       <pose>0 0 0.35 0 0 0</pose>
       <include merge="true">
-        <uri>package://ros_gz_example_description/models/diff_drive</uri>
+        <uri>package://spot_ros2_description/models/diff_drive</uri>
       </include>
 
       <plugin

@@ -15,15 +15,15 @@
  *
 */
 
-#ifndef ROS_GZ_EXAMPLE_GAZEBO__FULL_SYSTEM_HH_
-#define ROS_GZ_EXAMPLE_GAZEBO__FULL_SYSTEM_HH_
+#ifndef SPOT_ROS2_GAZEBO__FULL_SYSTEM_HH_
+#define SPOT_ROS2_GAZEBO__FULL_SYSTEM_HH_
 
 // The only required include in the header is this one.
 // All others will depend on what your plugin does.
 #include <gz/sim/EventManager.hh>
 #include <gz/sim/System.hh>
 
-namespace ros_gz_example_gazebo
+namespace spot_ros2_gazebo
 {
   // This is the main plugin's class. It must inherit from System and at least
   // one other interface.
