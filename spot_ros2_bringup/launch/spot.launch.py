@@ -30,11 +30,27 @@ def generate_launch_description():
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
-        launch_arguments={'gz_args': PathJoinSubstitution([
-            pkg_project_gazebo,
-            'worlds',
-            'edgar_mine_world.sdf'
-        ])}.items(),
+            launch_arguments={
+                'gz_args': [
+                    PathJoinSubstitution([
+                        pkg_project_gazebo, 
+                        'worlds',
+                        'edgar_mine_world.sdf'
+                    ]),
+                    # ' -v 4'   # show debug messages for gazebo
+                ],
+            }.items(),
+    )
+
+    # Bridge ROS topics and Gazebo messages for establishing communication
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        parameters=[{
+            'config_file': os.path.join(pkg_project_bringup, 'config', 'spot_bridge.yaml'),
+            'qos_overrides./tf_static.publisher.durability': 'transient_local',
+        }],
+        output='screen'
     )
 
     # Takes the description and joint angles as inputs and publishes the 3D poses of the robot links
@@ -50,6 +66,7 @@ def generate_launch_description():
     )
 
     # Visualize in RViz
+
     # rviz = Node(
     #    package='rviz2',
     #    executable='rviz2',
@@ -57,20 +74,9 @@ def generate_launch_description():
     #    condition=IfCondition(LaunchConfiguration('rviz'))
     # )
 
-    # Bridge ROS topics and Gazebo messages for establishing communication
-    bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        parameters=[{
-            'config_file': os.path.join(pkg_project_bringup, 'config', 'diff_drive_bridge.yaml'),
-            'qos_overrides./tf_static.publisher.durability': 'transient_local',
-        }],
-        output='screen'
-    )
-
     return LaunchDescription([
         gz_sim,
-        # bridge,
+        bridge,
         # robot_state_publisher,
         # DeclareLaunchArgument('rviz', default_value='true', description='Open RViz.'),
         # rviz
