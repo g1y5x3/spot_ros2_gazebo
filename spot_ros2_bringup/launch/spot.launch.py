@@ -53,6 +53,15 @@ def generate_launch_description():
         output='screen'
     )
 
+    # For publishing and controlling the robot pose, we need joint states of the robot
+    joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        arguments=[sdf_file],
+        output=['screen']
+    )
+
     # Takes the description and joint angles as inputs and publishes the 3D poses of the robot links
     robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -66,7 +75,8 @@ def generate_launch_description():
     )
 
     # Visualize in RViz
-
+    # Currenly the joint angles displayed in RVIZ is different from what the 
+    # simulator has shown
     # rviz = Node(
     #    package='rviz2',
     #    executable='rviz2',
@@ -75,9 +85,10 @@ def generate_launch_description():
     # )
 
     return LaunchDescription([
+        # DeclareLaunchArgument('rviz', default_value='true', description='Open RViz.'),
         gz_sim,
         bridge,
-        # robot_state_publisher,
-        # DeclareLaunchArgument('rviz', default_value='true', description='Open RViz.'),
+        joint_state_publisher,
+        robot_state_publisher,
         # rviz
     ])
