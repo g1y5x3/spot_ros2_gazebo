@@ -66,19 +66,17 @@ def generate_launch_description():
     )
 
     # Visualize in RViz
-    # Currenly the joint angles displayed in RVIZ is different from what the 
-    # simulator has shown
-    # rviz = Node(
-    #    package='rviz2',
-    #    executable='rviz2',
-    #    arguments=['-d', os.path.join(pkg_project_bringup, 'config', 'diff_drive.rviz')],
-    #    condition=IfCondition(LaunchConfiguration('rviz'))
-    # )
+    rviz = Node(
+       package='rviz2',
+       executable='rviz2',
+       arguments=['-d', os.path.join(pkg_project_bringup, 'config', 'spot.rviz')],
+       condition=IfCondition(LaunchConfiguration('rviz'))
+    )
 
     return LaunchDescription([
-        # DeclareLaunchArgument('rviz', default_value='true', description='Open RViz.'),
+        DeclareLaunchArgument('rviz', default_value='true', description='Open RViz.'),
         gz_sim,
         bridge,
         robot_state_publisher,
-        # rviz
+        rviz
     ])
