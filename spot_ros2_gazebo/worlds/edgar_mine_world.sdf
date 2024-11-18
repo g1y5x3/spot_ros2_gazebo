@@ -15,6 +15,11 @@
         filename="ignition-gazebo-scene-broadcaster-system"
         name="ignition::gazebo::systems::SceneBroadcaster">
     </plugin>
+    <!-- Add this plugin to enable GUI interactions -->
+    <plugin
+        filename="ignition-gazebo-user-commands-system"
+        name="ignition::gazebo::systems::UserCommands">
+    </plugin>
 
     <physics name="1ms" type="ode">
       <max_step_size>0.001</max_step_size>
@@ -23,9 +28,9 @@
     </physics>
 
     <model name="Edgar_Mine_Virtual_STIX">
+      <pose>-0.40 118 0 1.5707 0 -0.35</pose>
       <static>true</static>
       <link name="link">
-        <pose>0 0 0 1.5707 0 0</pose>
         <collision name="starting_area_collision">
           <geometry>
             <mesh>
@@ -194,7 +199,7 @@
     </model>
 
     <model name="spot">
-      <pose>35.7796 -107.668 0.4 0 0 0</pose>
+      <pose>0 0 0.3 0 0 1.5707</pose>
       <include merge="true">
         <uri>package://spot_ros2_description/models/spot</uri>
       </include>
