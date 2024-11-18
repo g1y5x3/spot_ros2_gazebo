@@ -203,6 +203,7 @@
       <plugin
         filename="ignition-gazebo-joint-state-publisher-system"
         name="ignition::gazebo::systems::JointStatePublisher">
+        <topic>model/spot/joint_state</topic>
       </plugin>
 
     </model>

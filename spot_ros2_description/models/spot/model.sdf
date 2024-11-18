@@ -1754,6 +1754,8 @@
     <plugin
         filename="ignition-gazebo-joint-trajectory-controller-system"
         name="ignition::gazebo::systems::JointTrajectoryController">
+        <topic>model/spot/joint_trajectory</topic>
+
         <joint_name>front_left_hip_x</joint_name>
         <initial_position>0.0</initial_position>
         <position_p_gain>600</position_p_gain>
