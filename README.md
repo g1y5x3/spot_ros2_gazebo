@@ -1,76 +1,58 @@
 # spot_ros2_gazebo
 A ROS 2 Spot simulator using Gazebo for prototyping spot autonomous behaviors.
 
+![gazebo_rviz_spot](assets/gazebo_rviz_spot.png)
+
 ## Included packages
 
-* `ros_gz_example_description` - holds the sdf description of the simulated system and any other assets.
+* `spot_ros2_description` - holds the sdf description of the custom spot model with lidar and camera sensors.
 
-* `ros_gz_example_gazebo` - holds gazebo specific code and configurations. Namely this is where systems end up.
+* `spot_ros2_gazebo` - holds gazebo specific code and configurations. Including the edgar mine environment.
 
-* `ros_gz_example_application` - holds ros2 specific code and configurations.
+* `spot_ros2_bringup` - holds launch files and high level utilities.
 
-* `ros_gz_example_bringup` - holds launch files and high level utilities.
-
+* `spot_ros2_application` - holds locomotion controller.
 
 ## Install
 
-For using the template with Gazebo Fortress switch to the `fortress` branch of this repository, otherwise use the default branch `main` for Gazebo Harmonic onwards.
-
 ### Requirements
 
-1. Choose a ROS and Gazebo combination https://gazebosim.org/docs/latest/ros_installation
-   Note: If you're using a specific and unsupported Gazebo version with ROS 2, you might need to set the `GZ_VERSION` environment variable, for example:
+1. Currently all packages are only tested with ROS 2 Humble + Gazebo Fortress
 
-    ```bash
-    export GZ_VERSION=fortress
-    ```
-
-1. Install necessary tools
+2. Install necessary tools
 
     ```bash
     sudo apt install python3-vcstool python3-colcon-common-extensions git wget
     ```
-
-### Use as template
-Directly `Use this template` and create your project repository on Github.
-
-Or start by creating a workspace and cloning the template repository:
-
-   ```bash
-   mkdir -p ~/template_ws/src
-   cd ~/template_ws/src
-   wget https://raw.githubusercontent.com/gazebosim/ros_gz_project_template/main/template_workspace.yaml
-   vcs import < template_workspace.yaml
-   ```
 
 ## Usage
 
 1. Install dependencies
 
     ```bash
-    cd ~/template_ws
-    source /opt/ros/<ROS_DISTRO>/setup.bash
+    cd ~/ros2_ws
+    source /opt/ros/humble/setup.bash
     sudo rosdep init
     rosdep update
-    rosdep install --from-paths src --ignore-src -r -i -y --rosdistro <ROS_DISTRO>
+    rosdep install --from-paths src --ignore-src -r -i -y --rosdistro humble
     ```
 
-1. Build the project
+2. Build the project
 
     ```bash
     colcon build --cmake-args -DBUILD_TESTING=ON
     ```
 
-1. Source the workspace
+3. Source the workspace
 
     ```bash
-    . ~/template_ws/install/setup.sh
+    source ~/ros2_ws/install/setup.sh
     ```
 
-1. Launch the simulation
+4. Launch the simulation
 
     ```bash
-    ros2 launch ros_gz_example_bringup diff_drive.launch.py
+    ros2 launch spot2_bringup spot.launch.py
     ```
-
-For a more detailed guide on using this template see [documentation](https://gazebosim.org/docs/latest/ros_gz_project_template_guide).
+## Acknowledgement
+* [template documentation](https://gazebosim.org/docs/latest/ros_gz_project_template_guide).
