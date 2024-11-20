@@ -11,7 +11,7 @@ A ROS 2 Spot simulator using Gazebo for prototyping spot autonomous behaviors.
 
 * `spot_ros2_bringup` - holds launch files and high level utilities.
 
-* `spot_ros2_application` - holds locomotion controller.
+* `spot_ros2_gz_controller` - holds locomotion controller.
 
 ## Install
 
