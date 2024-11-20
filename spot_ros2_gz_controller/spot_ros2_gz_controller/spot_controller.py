@@ -77,7 +77,7 @@ class SpotController(Node):
     def handle_stand(self, request, response):
         """Handle stand service request."""
         self.get_logger().info('Standing up...')
-        self.publish_trajectory(self.standing_pose, duration=2.0)
+        self.publish_trajectory(self.standing_pose, duration=5.0)
         response.success = True
         response.message = "Standing up command sent"
         return response
@@ -85,7 +85,7 @@ class SpotController(Node):
     def handle_sit(self, request, response):
         """Handle sit service request."""
         self.get_logger().info('Sitting down...')
-        self.publish_trajectory(self.sitting_pose, duration=2.0)
+        self.publish_trajectory(self.sitting_pose, duration=5.0)
         response.success = True
         response.message = "Sitting down command sent"
         return response

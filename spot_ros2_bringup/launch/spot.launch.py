@@ -65,6 +65,15 @@ def generate_launch_description():
         ]
     )
 
+    # Controller that converts /cmd_vel to /joint_trajectory
+    controller = Node(
+        package='spot_ros2_gz_controller',
+        executable='spot_controller',
+        name='spot_controller',
+        output='screen',
+        emulate_tty=True,
+    )
+
     # Visualize in RViz
     rviz = Node(
        package='rviz2',
@@ -78,5 +87,6 @@ def generate_launch_description():
         gz_sim,
         bridge,
         robot_state_publisher,
+        controller,
         rviz
     ])
