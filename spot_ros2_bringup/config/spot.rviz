@@ -195,10 +195,120 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        base_link:
+          Value: true
+        battery:
+          Value: false
+        body:
+          Value: false
+        camera_back:
+          Value: false
+        camera_frontleft:
+          Value: false
+        camera_frontright:
+          Value: false
+        camera_left:
+          Value: false
+        camera_right:
+          Value: false
+        front_left_ee:
+          Value: false
+        front_left_hip:
+          Value: false
+        front_left_lower_leg:
+          Value: false
+        front_left_upper_leg:
+          Value: false
+        front_rail:
+          Value: false
+        front_right_ee:
+          Value: false
+        front_right_hip:
+          Value: false
+        front_right_lower_leg:
+          Value: false
+        front_right_upper_leg:
+          Value: false
+        imu:
+          Value: false
+        odom_gz:
+          Value: true
+        rear_left_ee:
+          Value: false
+        rear_left_hip:
+          Value: false
+        rear_left_lower_leg:
+          Value: false
+        rear_left_upper_leg:
+          Value: false
+        rear_rail:
+          Value: false
+        rear_right_ee:
+          Value: false
+        rear_right_hip:
+          Value: false
+        rear_right_lower_leg:
+          Value: false
+        rear_right_upper_leg:
+          Value: false
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        odom_gz:
+          base_link:
+            battery:
+              {}
+            body:
+              front_rail:
+                {}
+              rear_rail:
+                {}
+            camera_back:
+              {}
+            camera_frontleft:
+              {}
+            camera_frontright:
+              {}
+            camera_left:
+              {}
+            camera_right:
+              {}
+            front_left_hip:
+              front_left_upper_leg:
+                front_left_lower_leg:
+                  front_left_ee:
+                    {}
+            front_right_hip:
+              front_right_upper_leg:
+                front_right_lower_leg:
+                  front_right_ee:
+                    {}
+            imu:
+              {}
+            rear_left_hip:
+              rear_left_upper_leg:
+                rear_left_lower_leg:
+                  rear_left_ee:
+                    {}
+            rear_right_hip:
+              rear_right_upper_leg:
+                rear_right_lower_leg:
+                  rear_right_ee:
+                    {}
+      Update Interval: 0
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: odom_gz
     Frame Rate: 30
   Name: root
   Tools:
@@ -241,25 +351,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 4.135248184204102
+      Distance: 4.564784526824951
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.056606218218803406
-        Y: 0.006124880164861679
-        Z: -0.2010532170534134
+        X: 1.0070791244506836
+        Y: 0.18850575387477875
+        Z: -0.2582368850708008
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3653984069824219
+      Pitch: 0.32539844512939453
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.475390672683716
+      Yaw: 3.1803951263427734
     Saved: ~
 Window Geometry:
   Displays:

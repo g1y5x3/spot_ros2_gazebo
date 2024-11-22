@@ -209,6 +209,15 @@
         name="ignition::gazebo::systems::JointStatePublisher">
         <topic>model/spot/joint_state</topic>
       </plugin>
+
+      <plugin
+        filename="ignition-gazebo-odometry-publisher-system"
+        name="ignition::gazebo::systems::OdometryPublisher">
+        <odom_frame>odom_gz</odom_frame>
+        <robot_base_frame>base_link</robot_base_frame>
+        <dimensions>3</dimensions>
+      </plugin>
+
     </model>
   </world>
 </sdf>
