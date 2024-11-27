@@ -13,8 +13,8 @@ class SpotController(Node):
         self.joint_names = [
             'front_left_hip_x',  'front_left_hip_y',  'front_left_knee',
             'front_right_hip_x', 'front_right_hip_y', 'front_right_knee',
-            'rear_left_hip_x',  'rear_left_hip_y',  'rear_left_knee',
-            'rear_right_hip_x', 'rear_right_hip_y', 'rear_right_knee'
+            'rear_left_hip_x',   'rear_left_hip_y',   'rear_left_knee',
+            'rear_right_hip_x',  'rear_right_hip_y',  'rear_right_knee'
         ]
         
         # Joint positions for standing pose
