@@ -25,6 +25,8 @@ A ROS 2 Spot simulator using Gazebo for prototyping spot autonomous behaviors.
     sudo apt install python3-vcstool python3-colcon-common-extensions git wget
     ```
 
+3. [pinocchio](https://stack-of-tasks.github.io/pinocchio/download.html)
+
 ## Usage
 
 1. Install dependencies
