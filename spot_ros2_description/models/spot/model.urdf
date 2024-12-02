@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+<robot name="spot">
+  <link name="base_link">
+    <inertial>
+      <origin rpy="0 -0 0" xyz="0.005937 0.000326 0.04636"/>
+      <mass value="20.492"/>
+      <inertia ixx="0.287877" ixy="0.0014834" ixz="-0.0347842" iyy="1.31868" iyz="-0.000519074" izz="1.18915"/>
+    </inertial>
+  </link>
+  <link name="body">
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="base_link_joint" type="fixed">
+    <child link="body"/>
+    <parent link="base_link"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="front_rail">
+    <origin rpy="0 -0 0" xyz="0.223 0 0.0805"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="front_rail_joint" type="fixed">
+    <child link="front_rail"/>
+    <parent link="body"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="rear_rail">
+    <origin rpy="0 -0 0" xyz="-0.223 0 0.0805"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="rear_rail_joint" type="fixed">
+    <child link="rear_rail"/>
+    <parent link="body"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="battery">
+    <origin rpy="0 -0 0" xyz="0 0 -0.03"/>
+    <inertial>
+      <mass value="4"/>
+      <inertia ixx="0.012291" ixy="0" ixz="0" iyy="0.037875" iyz="0" izz="0.0444"/>
+    </inertial>
+  </link>
+  <joint name="battery_joint" type="fixed">
+    <child link="battery"/>
+    <parent link="base_link"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="camera_back">
+    <origin rpy="-0 0.3 3.1415926535897931" xyz="-0.425 0 0.01"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="camera_back_j" type="fixed">
+    <child link="camera_back"/>
+    <parent link="base_link"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="camera_frontleft">
+    <origin rpy="1.35556 0.353917 -0.554196" xyz="0.415 0.037 -0.01"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="camera_frontleft_j" type="fixed">
+    <child link="camera_frontleft"/>
+    <parent link="base_link"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="camera_frontright">
+    <origin rpy="-1.35556 0.353917 0.554196" xyz="0.415 -0.037 -0.01"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="camera_frontright_j" type="fixed">
+    <child link="camera_frontright"/>
+    <parent link="base_link"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="camera_left">
+    <origin rpy="0 0.2 1.5707963267948966" xyz="-0.125 0.12 0.035"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="camera_left_j" type="fixed">
+    <child link="camera_left"/>
+    <parent link="base_link"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="camera_right">
+    <origin rpy="-0 0.2 -1.5707963267948966" xyz="-0.125 -0.12 0.035"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="camera_right_j" type="fixed">
+    <child link="camera_right"/>
+    <parent link="base_link"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="front_left_hip">
+    <origin rpy="0 -0 0" xyz="0.29785 0.055 0"/>
+    <inertial>
+      <mass value="2"/>
+      <inertia ixx="0.0027" ixy="0" ixz="0" iyy="0.00416667" iyz="0" izz="0.00416667"/>
+    </inertial>
+  </link>
+  <joint name="front_left_hip_x" type="revolute">
+    <child link="front_left_hip"/>
+    <parent link="base_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="80" lower="-0.785398" upper="0.785398" velocity="15"/>
+    <origin xyz="1 0 0"/>
+  </joint>
+  <link name="front_left_upper_leg">
+    <origin rpy="0 -0 0" xyz="0.29785 0.165945 0"/>
+    <inertial>
+      <origin rpy="0 -0 0" xyz="0 0 -0.14"/>
+      <mass value="1"/>
+      <inertia ixx="0.0155334" ixy="0" ixz="0" iyy="0.0155334" iyz="0" izz="0.000962667"/>
+    </inertial>
+  </link>
+  <joint name="front_left_hip_y" type="revolute">
+    <child link="front_left_upper_leg"/>
+    <parent link="front_left_hip"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="80" lower="-0.898845" upper="2.29511" velocity="15"/>
+    <origin xyz="0 1 0"/>
+  </joint>
+  <link name="front_left_lower_leg">
+    <origin rpy="0 -0 0" xyz="0.32285 0.165945 -0.3205"/>
+    <inertial>
+      <origin rpy="0 -0 0" xyz="0 0 -0.16"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.00743438" ixy="0" ixz="0" iyy="0.00740104" iyz="0" izz="0.000135417"/>
+    </inertial>
+  </link>
+  <joint name="front_left_knee" type="revolute">
+    <child link="front_left_lower_leg"/>
+    <parent link="front_left_upper_leg"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="80" lower="-2.7929" upper="-0.254801" velocity="15"/>
+    <origin xyz="0 1 0"/>
+  </joint>
+  <link name="front_left_ee">
+    <origin rpy="0 -0 0" xyz="0.32285 0.165945 -0.6905"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="front_left_foot" type="fixed">
+    <child link="front_left_ee"/>
+    <parent link="front_left_lower_leg"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="front_right_hip">
+    <origin rpy="0 -0 0" xyz="0.29785 -0.055 0"/>
+    <inertial>
+      <mass value="2"/>
+      <inertia ixx="0.0027" ixy="0" ixz="0" iyy="0.00416667" iyz="0" izz="0.00416667"/>
+    </inertial>
+  </link>
+  <joint name="front_right_hip_x" type="revolute">
+    <child link="front_right_hip"/>
+    <parent link="base_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="80" lower="-0.785398" upper="0.785398" velocity="15"/>
+    <origin xyz="1 0 0"/>
+  </joint>
+  <link name="front_right_upper_leg">
+    <origin rpy="0 -0 0" xyz="0.29785 -0.165945 0"/>
+    <inertial>
+      <origin rpy="0 -0 0" xyz="0 0 -0.14"/>
+      <mass value="1"/>
+      <inertia ixx="0.0155334" ixy="0" ixz="0" iyy="0.0155334" iyz="0" izz="0.000962667"/>
+    </inertial>
+  </link>
+  <joint name="front_right_hip_y" type="revolute">
+    <child link="front_right_upper_leg"/>
+    <parent link="front_right_hip"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="80" lower="-0.898845" upper="2.29511" velocity="15"/>
+    <origin xyz="0 1 0"/>
+  </joint>
+  <link name="front_right_lower_leg">
+    <origin rpy="0 -0 0" xyz="0.32285 -0.165945 -0.3205"/>
+    <inertial>
+      <origin rpy="0 -0 0" xyz="0 0 -0.16"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.00743438" ixy="0" ixz="0" iyy="0.00740104" iyz="0" izz="0.000135417"/>
+    </inertial>
+  </link>
+  <joint name="front_right_knee" type="revolute">
+    <child link="front_right_lower_leg"/>
+    <parent link="front_right_upper_leg"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="80" lower="-2.7929" upper="-0.254801" velocity="15"/>
+    <origin xyz="0 1 0"/>
+  </joint>
+  <link name="front_right_ee">
+    <origin rpy="0 -0 0" xyz="0.32285 -0.165945 -0.6905"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="front_right_foot" type="fixed">
+    <child link="front_right_ee"/>
+    <parent link="front_right_lower_leg"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="imu">
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="imu_j" type="fixed">
+    <child link="imu"/>
+    <parent link="base_link"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="rear_left_hip">
+    <origin rpy="0 -0 0" xyz="-0.29785 0.055 0"/>
+    <inertial>
+      <mass value="2"/>
+      <inertia ixx="0.0027" ixy="0" ixz="0" iyy="0.00416667" iyz="0" izz="0.00416667"/>
+    </inertial>
+  </link>
+  <joint name="rear_left_hip_x" type="revolute">
+    <child link="rear_left_hip"/>
+    <parent link="base_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="80" lower="-0.785398" upper="0.785398" velocity="15"/>
+    <origin xyz="1 0 0"/>
+  </joint>
+  <link name="rear_left_upper_leg">
+    <origin rpy="0 -0 0" xyz="-0.29785 0.165945 0"/>
+    <inertial>
+      <origin rpy="0 -0 0" xyz="0 0 -0.14"/>
+      <mass value="1"/>
+      <inertia ixx="0.0155334" ixy="0" ixz="0" iyy="0.0155334" iyz="0" izz="0.000962667"/>
+    </inertial>
+  </link>
+  <joint name="rear_left_hip_y" type="revolute">
+    <child link="rear_left_upper_leg"/>
+    <parent link="rear_left_hip"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="80" lower="-0.898845" upper="2.29511" velocity="15"/>
+    <origin xyz="0 1 0"/>
+  </joint>
+  <link name="rear_left_lower_leg">
+    <origin rpy="0 -0 0" xyz="-0.27285 0.165945 -0.3205"/>
+    <inertial>
+      <origin rpy="0 -0 0" xyz="0 0 -0.16"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.00743438" ixy="0" ixz="0" iyy="0.00740104" iyz="0" izz="0.000135417"/>
+    </inertial>
+  </link>
+  <joint name="rear_left_knee" type="revolute">
+    <child link="rear_left_lower_leg"/>
+    <parent link="rear_left_upper_leg"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="80" lower="-2.7929" upper="-0.254801" velocity="15"/>
+    <origin xyz="0 1 0"/>
+  </joint>
+  <link name="rear_left_ee">
+    <origin rpy="0 -0 0" xyz="-0.27285 0.165945 -0.6905"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="rear_left_foot" type="fixed">
+    <child link="rear_left_ee"/>
+    <parent link="rear_left_lower_leg"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+  <link name="rear_right_hip">
+    <origin rpy="0 -0 0" xyz="-0.29785 -0.055 0"/>
+    <inertial>
+      <mass value="2"/>
+      <inertia ixx="0.0027" ixy="0" ixz="0" iyy="0.00416667" iyz="0" izz="0.00416667"/>
+    </inertial>
+  </link>
+  <joint name="rear_right_hip_x" type="revolute">
+    <child link="rear_right_hip"/>
+    <parent link="base_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="80" lower="-0.785398" upper="0.785398" velocity="15"/>
+    <origin xyz="1 0 0"/>
+  </joint>
+  <link name="rear_right_upper_leg">
+    <origin rpy="0 -0 0" xyz="-0.29785 -0.165945 0"/>
+    <inertial>
+      <origin rpy="0 -0 0" xyz="0 0 -0.14"/>
+      <mass value="1"/>
+      <inertia ixx="0.0155334" ixy="0" ixz="0" iyy="0.0155334" iyz="0" izz="0.000962667"/>
+    </inertial>
+  </link>
+  <joint name="rear_right_hip_y" type="revolute">
+    <child link="rear_right_upper_leg"/>
+    <parent link="rear_right_hip"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="80" lower="-0.898845" upper="2.29511" velocity="15"/>
+    <origin xyz="0 1 0"/>
+  </joint>
+  <link name="rear_right_lower_leg">
+    <origin rpy="0 -0 0" xyz="-0.27285 -0.165945 -0.3205"/>
+    <inertial>
+      <origin rpy="0 -0 0" xyz="0 0 -0.16"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.00743438" ixy="0" ixz="0" iyy="0.00740104" iyz="0" izz="0.000135417"/>
+    </inertial>
+  </link>
+  <joint name="rear_right_knee" type="revolute">
+    <child link="rear_right_lower_leg"/>
+    <parent link="rear_right_upper_leg"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="80" lower="-2.7929" upper="-0.254801" velocity="15"/>
+    <origin xyz="0 1 0"/>
+  </joint>
+  <link name="rear_right_ee">
+    <origin rpy="0 -0 0" xyz="-0.27285 -0.165945 -0.6905"/>
+    <inertial>
+      <mass value="1e-05"/>
+      <inertia ixx="0.001" ixy="1e-06" ixz="1e-06" iyy="0.001" iyz="1e-06" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="rear_right_foot" type="fixed">
+    <child link="rear_right_ee"/>
+    <parent link="rear_right_lower_leg"/>
+    <origin xyz="0 0 1"/>
+  </joint>
+</robot>
