@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'spot_controller = spot_ros2_gz_controller.spot_controller:main'
+            'spot_controller = spot_ros2_gz_controller.spot_controller:main',
+            'dynamics = spot_ros2_gz_controller.dynamics:main'
         ],
     },
 )
