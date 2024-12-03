@@ -46,12 +46,14 @@ def generate_launch_description():
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
+        output='screen',
         parameters=[{
             'config_file': os.path.join(pkg_project_bringup, 'config', 'spot_bridge.yaml'),
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
-        }],
-        output='screen'
+        }]
     )
+
+    # TODO: launch a driver node that converts the odometry to /tf frame
 
     # Takes the description and joint angles as inputs and publishes the 3D poses of the robot links
     robot_state_publisher = Node(

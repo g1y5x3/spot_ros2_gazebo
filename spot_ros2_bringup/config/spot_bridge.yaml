@@ -19,6 +19,7 @@
   ros_type_name: "nav_msgs/msg/Odometry"
   gz_type_name: "ignition.msgs.Odometry"
   direction: GZ_TO_ROS
+# TODO: use a ros node to publish the odometry parent frame
 - ros_topic_name: "/tf"
   gz_topic_name: "/model/spot/pose"
   ros_type_name: "tf2_msgs/msg/TFMessage"
