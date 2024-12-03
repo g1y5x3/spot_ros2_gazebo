@@ -9,11 +9,10 @@
   <author>Yixiang Gao</author>
 
   <depend>ros_gz</depend>
+  <depend>odom_to_tf_ros2</depend>
   <depend>sdformat_urdf</depend>
-  <depend>joint_state_publisher_gui</depend>
-
-  <depend>spot_ros2_description</depend>
   <depend>spot_ros2_gazebo</depend>
+  <depend>spot_ros2_description</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
