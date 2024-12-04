@@ -51,14 +51,25 @@ class RobotState:
         self.omega = np.array([ang_vel.z, ang_vel.y, ang_vel.x])
 
     def __str__(self):
-        output = "Robot State:\n"
-        output += "joint positions (q):\n"
-        for i, name in enumerate(self.joint_names):
-            output += f"{name}: {self.q[i]:.3f}\n"
+        output = "===== Robot State ===== \n"
 
-        output += "\njoint velocities (q_dot):\n"  
-        for i, name in enumerate(self.joint_names):
-            output += f"{name}: {self.q_dot[i]:.3f}\n"
+        # Group joints by leg
+        fl = f"FL: [{self.q[0]:.3f}, {self.q[1]:.3f},  {self.q[2]:.3f}]"
+        fr = f"FR: [{self.q[3]:.3f}, {self.q[4]:.3f},  {self.q[5]:.3f}]"
+        rl = f"RL: [{self.q[6]:.3f}, {self.q[7]:.3f},  {self.q[8]:.3f}]"
+        rr = f"RR: [{self.q[9]:.3f}, {self.q[10]:.3f}, {self.q[11]:.3f}]"
+   
+        output += "joint positions (q):\n"
+        output += f"{fl}\n{fr}\n{rl}\n{rr}\n"
+   
+        # Same format for velocities
+        fl_v = f"FL: [{self.q_dot[0]:.3f}, {self.q_dot[1]:.3f},  {self.q_dot[2]:.3f}]"
+        fr_v = f"FR: [{self.q_dot[3]:.3f}, {self.q_dot[4]:.3f},  {self.q_dot[5]:.3f}]"
+        rl_v = f"RL: [{self.q_dot[6]:.3f}, {self.q_dot[7]:.3f},  {self.q_dot[8]:.3f}]"
+        rr_v = f"RR: [{self.q_dot[9]:.3f}, {self.q_dot[10]:.3f}, {self.q_dot[11]:.3f}]"
+   
+        output += "\njoint velocities (q_dot):\n"
+        output += f"{fl_v}\n{fr_v}\n{rl_v}\n{rr_v}\n"
 
         # Position and Velocity
         output += "\nposition (p):\n"

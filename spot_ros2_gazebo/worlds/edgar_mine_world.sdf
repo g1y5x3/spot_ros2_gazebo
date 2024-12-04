@@ -218,10 +218,7 @@
         <dimensions>3</dimensions>
       </plugin>
 
-      <!-- 
-        only publish the odometry frame. 
-        TODO: remove the PosePublisher, use a driver node to publish the /odom 
-      -->
+      <!-- TODO: remove the PosePublisher, and manage the /odom frame from ROS side -->
       <plugin
         filename="ignition-gazebo-pose-publisher-system"
         name="ignition::gazebo::systems::PosePublisher">
