@@ -7,17 +7,16 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from std_srvs.srv import Trigger
 
 from .robot_state import RobotState
+from .gait_scheduler import GaitScheduler
 
 class SpotController(Node):
     def __init__(self):
         super().__init__('spot_controller')
  
-        # Store current robot states
-        self.robot_state = RobotState()
-
-        # Store current joint states
-        self.current_positions = {}
-        self.current_velocities = {}  
+        # Publisher and Subscriber
+        # Store received messages
+        self.current_odom = {}
+        self.current_joint_state = {}  
     
         # Create subscriber for joint states
         self.joint_states_sub = self.create_subscription(
@@ -42,7 +41,7 @@ class SpotController(Node):
             10
         )
        
-        # Create services
+        # Services
         # joint names in order
         self.joint_names = [
             'front_left_hip_x',  'front_left_hip_y',  'front_left_knee',
@@ -84,7 +83,13 @@ class SpotController(Node):
             callback_group=self.callback_group
         )
 
-        # For debugging        
+        # Store current robot states
+        self.robot_state = RobotState()
+
+        self.gait_scheduler = GaitScheduler(gait_cycle=0.5, 
+                                            start_time=self.get_clock().now())
+
+        self.create_timer(1/30.0, self.gait_loop)
         self.create_timer(1.0, self.control_loop)
 
         self.get_logger().info('Spot controller initialized.')
@@ -96,8 +101,13 @@ class SpotController(Node):
     def odometry_callback(self, msg: Odometry):
         self.robot_state.update_pose(msg)
 
+    def gait_loop(self):
+        self.gait_scheduler.update_phase(self.get_clock().now())
+        print(f"Current Phase: {self.gait_scheduler.current_phase:.3f}\n")
+
     def control_loop(self):
-        print(self.robot_state)
+        # print(self.robot_state)
+        pass
 
     # Service
     def publish_trajectory(self, positions, duration=2.0):
