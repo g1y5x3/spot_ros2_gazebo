@@ -12,6 +12,7 @@
 
   <depend>rclpy</depend>
   <depend>std_srvs</depend>
+  <depend>nav_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>trajectory_msgs</depend>
   <depend>ament_index_python</depend>
@@ -23,4 +24,3 @@
     <build_type>ament_python</build_type>
   </export>
 </package>
-
