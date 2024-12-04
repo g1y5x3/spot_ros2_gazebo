@@ -89,8 +89,9 @@ class SpotController(Node):
         self.gait_scheduler = GaitScheduler(gait_cycle=0.5, 
                                             start_time=self.get_clock().now())
 
-        self.create_timer(1/30.0, self.gait_loop)
-        self.create_timer(1.0, self.control_loop)
+        # 32Hz with 0.5s gait cyle gives exactly 16 time stamps
+        self.create_timer(1/32, self.gait_loop) 
+        self.create_timer(1/1000.0, self.control_loop)
 
         self.get_logger().info('Spot controller initialized.')
 
