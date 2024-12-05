@@ -47,8 +47,35 @@ class RobotState:
 
         # convert quaternion to euler angles
         r = R.from_quat([q.x, q.y, q.z, q.w])
-        self.theta = r.as_euler('zyx', degrees=False)
-        self.omega = np.array([ang_vel.z, ang_vel.y, ang_vel.x])
+        # NOTE: Th
+        self.theta = r.as_euler('xyz', degrees=False)
+        self.omega = np.array([ang_vel.x, ang_vel.y, ang_vel.z])
+
+    def get_full_state(self):
+        """
+        Returns the full 13-dimensional state vector required by the MPC controller.
+    
+        The state vector consists of:
+        - θ (roll, pitch, yaw angles) [3]
+        - p (position) [3]
+        - ω (angular velocity) [3]
+        - ṗ (linear velocity) [3]
+        - g (gravity constant) [1]
+    
+        Returns:
+            np.ndarray: 13-element state vector [θ, p, ω, ṗ, g]
+        """
+        state = np.zeros(13, dtype=np.float32)
+    
+        state[0:3] = self.theta  # [roll, pitch, yaw]
+        state[3:6] = self.p
+        state[6:9] = self.omega
+        state[9:12] = self.p_dot
+    
+        # Add gravity
+        state[12] = -9.81
+
+        return state
 
     def __str__(self):
         output = "===== Robot State ===== \n"
