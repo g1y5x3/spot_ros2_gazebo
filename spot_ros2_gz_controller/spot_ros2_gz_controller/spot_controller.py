@@ -1,10 +1,12 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
+
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from std_srvs.srv import Trigger
+from typing import Optional
 
 from .robot_state import RobotState
 from .gait_scheduler import GaitScheduler
@@ -13,35 +15,7 @@ class SpotController(Node):
     def __init__(self):
         super().__init__('spot_controller')
  
-        # Publisher and Subscriber
-        # Store received messages
-        self.current_odom = {}
-        self.current_joint_state = {}  
-    
-        # Create subscriber for joint states
-        self.joint_states_sub = self.create_subscription(
-            JointState,
-            '/joint_states',
-            self.joint_states_callback,
-            10
-        )
-
-        # Create subscriber for odometry
-        self.joint_states_sub = self.create_subscription(
-            Odometry,
-            '/spot/odometry',
-            self.odometry_callback,
-            10
-        )
-
-        # Create publisher for joint trajectory
-        self.trajectory_pub = self.create_publisher(
-            JointTrajectory,
-            '/spot/joint_trajectory',
-            10
-        )
-       
-        # Services
+        # Service TODO: separate the service into a different file
         # joint names in order
         self.joint_names = [
             'front_left_hip_x',  'front_left_hip_y',  'front_left_knee',
@@ -83,15 +57,32 @@ class SpotController(Node):
             callback_group=self.callback_group
         )
 
-        # Store current robot states
+        self.joint_states_sub = self.create_subscription(
+            JointState,
+            '/joint_states',
+            self.joint_states_callback,
+            10
+        )
+
+        self.joint_states_sub = self.create_subscription(
+            Odometry,
+            '/spot/odometry',
+            self.odometry_callback,
+            10
+        )
+
+        self.trajectory_pub = self.create_publisher(
+            JointTrajectory,
+            '/spot/joint_trajectory',
+            10
+        )
+
         self.robot_state = RobotState()
+        self.gait_scheduler = GaitScheduler(gait_cycle=0.5, start_time=self.get_clock().now())
 
-        self.gait_scheduler = GaitScheduler(gait_cycle=0.5, 
-                                            start_time=self.get_clock().now())
-
-        # 32Hz with 0.5s gait cyle gives exactly 16 time stamps
-        self.create_timer(1/32, self.gait_loop) 
-        self.create_timer(1/1000.0, self.control_loop)
+        self.create_timer(1/30, self.high_level_control_callback) 
+        self.create_timer(1/1000.0, self.state_estimation_callback)
+        self.create_timer(1/4500.0, self.leg_control_callback)
 
         self.get_logger().info('Spot controller initialized.')
 
@@ -102,12 +93,14 @@ class SpotController(Node):
     def odometry_callback(self, msg: Odometry):
         self.robot_state.update_pose(msg)
 
-    def gait_loop(self):
+    def high_level_control_callback(self):
         self.gait_scheduler.update_phase(self.get_clock().now())
         print(f"Current Phase: {self.gait_scheduler.current_phase:.3f}\n")
 
-    def control_loop(self):
-        # print(self.robot_state)
+    def state_estimation_callback(self):
+        print(self.robot_state)
+
+    def leg_control_callback(self):
         pass
 
     # Service

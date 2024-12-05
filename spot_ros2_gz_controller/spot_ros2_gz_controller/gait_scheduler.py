@@ -18,9 +18,15 @@ class GaitScheduler:
         elapsed = (current_time - self.start_time).nanoseconds / 1e9
         self.current_phase = (elapsed % self.gait_cycle) / self.gait_cycle
 
-    # Computes the ground contact schedule for each leg over the prediction 
-    # horizon
     def get_contact_schedule(self, horizon_steps):
+        """
+        Generate contact schedule for the full MPC horizon.
+        The schedule always looks ahead for the full horizon,
+        regardless of current phase.
+            
+        Args:
+            horizon_steps: Number of timesteps to plan ahead
+        """
         contact_schedule = np.zeros((4, horizon_steps))
     
         for timestep in range(horizon_steps):
