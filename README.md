@@ -58,3 +58,4 @@ A ROS 2 Spot simulator using Gazebo for prototyping spot autonomous behaviors.
     ```
 ## Acknowledgement
 * [template documentation](https://gazebosim.org/docs/latest/ros_gz_project_template_guide).
+* [pydrake] make sure you have the correct version `pip >= 20.3`. You can upgrade through `pip install --upgrade pip`.

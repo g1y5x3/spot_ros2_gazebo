@@ -1,7 +1,11 @@
 import numpy as np
-from scipy.spatial.transform import Rotation as R
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import JointState
+from scipy.spatial.transform import Rotation as R
+from pydrake.math import RollPitchYaw
+from pydrake.common.eigen_geometry import Quaternion
+# from pydrake.multibody.parsing import Parser
+# from pydrake.multibody.plant import MultibodyPlant, JacobianWrtVariable
 
 class RobotState:
     def __init__(self):
@@ -42,16 +46,19 @@ class RobotState:
         self.p_dot = np.array([v.x, v.y, v.z])
 
         # orientation and angular velocity
-        q = msg.pose.pose.orientation
+        ang_q = msg.pose.pose.orientation
         ang_vel = msg.twist.twist.angular
 
-        # convert quaternion to euler angles
-        r = R.from_quat([q.x, q.y, q.z, q.w])
-        # NOTE: Th
-        self.theta = r.as_euler('xyz', degrees=False)
+        self.theta = self.quat_to_euler(ang_q)
         self.omega = np.array([ang_vel.x, ang_vel.y, ang_vel.z])
 
-    def get_full_state(self):
+    def quat_to_euler(self, q):
+        drake_quat = Quaternion(w=q.w, x=q.x, y=q.y, z=q.z)
+        rpy = RollPitchYaw(drake_quat.rotation())
+        
+        return np.array([rpy.roll_angle(), rpy.pitch_angle(), rpy.yaw_angle()])
+
+    def get_state_vec(self):
         """
         Returns the full 13-dimensional state vector required by the MPC controller.
     
@@ -114,3 +121,5 @@ class RobotState:
         
         return output
 
+if __name__ == "__main__":
+    robot_state = RobotState()

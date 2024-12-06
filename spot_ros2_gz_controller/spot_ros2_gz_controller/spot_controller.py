@@ -96,19 +96,22 @@ class SpotController(Node):
     def high_level_control_callback(self):
         horizon_steps = 16
         # Get current robot state
-        current_robot_state = self.robot_state.get_full_state()
+        current_robot_state = self.robot_state.get_state_vec()
 
         self.gait_scheduler.update_phase(self.get_clock().now())
         current_contact_schedule = self.gait_scheduler.get_contact_schedule(horizon_steps)
-        print(f"Current Phase: {self.gait_scheduler.current_phase:.3f}\n")
+
+
+        # print(f"Current Phase: {self.gait_scheduler.current_phase:.3f}\n")
 
     def state_estimation_callback(self):
         # since gazebo is providing the ground truth of robot state, no 
         # estimation is needed.
         # TODO: estimate based on sensor inputs
-        print(self.robot_state)
+        print(f"theta {self.robot_state.theta}")
 
     def leg_control_callback(self):
+        # publish the JointTrajectory msg
         pass
 
     # Service
