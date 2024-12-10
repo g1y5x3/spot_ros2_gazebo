@@ -1,12 +1,15 @@
+
+from typing import Optional
+from pathlib import Path
+
 import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
-
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from ament_index_python.packages import get_package_share_directory
 from std_srvs.srv import Trigger
-from typing import Optional
 
 from .robot_state import RobotState
 from .gait_scheduler import GaitScheduler
@@ -57,6 +60,9 @@ class SpotController(Node):
             callback_group=self.callback_group
         )
 
+        # Control subscribe to /cmd_vel and publish to /joint_trajectory
+        spot_model_description = get_package_share_directory('spot_ros2_description')
+
         self.joint_states_sub = self.create_subscription(
             JointState,
             '/joint_states',
@@ -77,7 +83,10 @@ class SpotController(Node):
             10
         )
 
-        self.robot_state = RobotState()
+        model_sdf = Path(spot_model_description) / 'models' / 'spot' / 'model.sdf'
+        print(str(model_sdf))
+        self.robot_state = RobotState(str(model_sdf))
+
         self.gait_scheduler = GaitScheduler(gait_cycle=0.5, start_time=self.get_clock().now())
 
         self.create_timer(1/30, self.high_level_control_callback) 
@@ -108,7 +117,8 @@ class SpotController(Node):
         # since gazebo is providing the ground truth of robot state, no 
         # estimation is needed.
         # TODO: estimate based on sensor inputs
-        print(f"theta {self.robot_state.theta}")
+        # print(f"theta {self.robot_state.theta}")
+        pass
 
     def leg_control_callback(self):
         # publish the JointTrajectory msg

@@ -2,13 +2,13 @@ import numpy as np
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import JointState
 from scipy.spatial.transform import Rotation as R
+from pydrake.multibody.parsing import Parser
+from pydrake.multibody.plant import MultibodyPlant
 from pydrake.math import RollPitchYaw
 from pydrake.common.eigen_geometry import Quaternion
-# from pydrake.multibody.parsing import Parser
-# from pydrake.multibody.plant import MultibodyPlant, JacobianWrtVariable
 
 class RobotState:
-    def __init__(self):
+    def __init__(self, model_sdf: str):
 
         # fixed order of the joints
         self.joint_names = [
@@ -27,6 +27,16 @@ class RobotState:
         self.p = np.zeros(3)
         self.omega = np.zeros(3)    # angular velocity
         self.p_dot = np.zeros(3)    # linear velocity
+
+        # load model sdf to calculate kinematics and dynamics for locomotion 
+        # using drake 
+        # https://github.com/RobotLocomotion/drake 
+        self.plant = MultibodyPlant(time_step=0.0)
+        Parser(self.plant).AddModels(model_sdf)
+        self.plant.Finalize()
+        # Print model statistics
+        print(f"Model loaded with:")
+        print(f"- Num joints: {self.plant.num_joints()}")
         
     def update_joints(self, msg: JointState):
         for i, name in enumerate(msg.name):
@@ -86,7 +96,6 @@ class RobotState:
 
     def __str__(self):
         output = "===== Robot State ===== \n"
-
         # Group joints by leg
         fl = f"FL: [{self.q[0]:.3f}, {self.q[1]:.3f},  {self.q[2]:.3f}]"
         fr = f"FR: [{self.q[3]:.3f}, {self.q[4]:.3f},  {self.q[5]:.3f}]"
@@ -120,6 +129,3 @@ class RobotState:
         output += f"[{self.omega[0]:.3f}, {self.omega[1]:.3f}, {self.omega[2]:.3f}]\n"
         
         return output
-
-if __name__ == "__main__":
-    robot_state = RobotState()

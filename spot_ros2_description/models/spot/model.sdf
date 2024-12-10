@@ -52,7 +52,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -90,7 +89,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -128,7 +126,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -186,7 +183,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -295,7 +291,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -402,7 +397,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -509,7 +503,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -616,7 +609,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -723,7 +715,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -782,7 +773,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="front_left_upper_leg">
@@ -829,7 +819,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="front_left_lower_leg">
@@ -922,7 +911,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="front_left_ee">
@@ -948,7 +936,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -1006,7 +993,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="front_right_upper_leg">
@@ -1053,7 +1039,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="front_right_lower_leg">
@@ -1146,7 +1131,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="front_right_ee">
@@ -1172,7 +1156,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -1287,7 +1270,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -1345,7 +1327,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="rear_left_upper_leg">
@@ -1392,7 +1373,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="rear_left_lower_leg">
@@ -1485,7 +1465,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="rear_left_ee">
@@ -1511,7 +1490,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
@@ -1569,7 +1547,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="rear_right_upper_leg">
@@ -1616,7 +1593,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="rear_right_lower_leg">
@@ -1709,7 +1685,6 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
     <link name="rear_right_ee">
@@ -1735,7 +1710,6 @@
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>0</use_parent_model_frame>
         <limit>
           <lower>-1e+16</lower>
           <upper>1e+16</upper>
