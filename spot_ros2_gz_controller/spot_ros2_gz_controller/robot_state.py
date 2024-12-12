@@ -33,31 +33,22 @@ class RobotState:
         # using drake library for kinematics and dynamics calculation
         # https://github.com/RobotLocomotion/drake 
         self.plant = MultibodyPlant(time_step=0.0)
-        parser = Parser(self.plant)
-        self.model_instance = parser.AddModels(model_sdf)
+        Parser(self.plant).AddModels(model_sdf)
         self.plant.Finalize()
         self.context = self.plant.CreateDefaultContext()
 
-        print(f"Number of positions: {self.plant.num_positions(self.model_instance)}")
-        print(f"Number of velocities: {self.plant.num_velocities(self.model_instance)}")
-        print(f"Number of actuated joints: {self.plant.num_actuated_dofs(self.model_instance)}")
+        current_positions_names = self.plant.GetPositionNames()
+        current_positions = self.plant.GetPositions(self.context)
+        print(f"Number of positions: {self.plant.num_positions()}")
+        print(current_positions_names)
+        print(current_positions)
 
-        # Create a mapping of your joint names to Drake's joint indices
-        self.plant_joint_indices = {}
-        for i in range(self.plant.num_joints()):
-            joint = self.plant.get_joint(JointIndex(i))
-            print(joint)
-            if joint.name() in self.joint_names:
-                self.plant_joint_indices[joint.name()] = i
-        print(self.plant_joint_indices)
-
-        # # Print model statistics
-        # print(f"Model SDF {model_sdf} loaded!")
-        # print(f"- Num joints: {self.plant.num_joints()}")
-        # for i in range(self.plant.num_joints()):
-        #     joint = self.plant.get_joint(JointIndex(i))
-        #     print(f"{i}: {joint.name()}")
-        
+        current_velocitiy_names = self.plant.GetVelocityNames()
+        current_velocities_names = self.plant.GetVelocities(self.context)
+        print(f"Number of velocities: {self.plant.num_velocities()}")
+        print(current_velocitiy_names)
+        print(current_velocities_names)
+      
     def update_joints(self, msg: JointState):
         for i, name in enumerate(msg.name):
             if name in self.joint_names:
@@ -68,17 +59,16 @@ class RobotState:
         # drake context return all positions that it tracks internally
         current_positions = self.plant.GetPositions(self.context)
         current_velocities = self.plant.GetVelocities(self.context)
+        print(f"current_position")
 
-        print(f"current_position {len(current_positions)}")
-
-        for name, pos, vel in zip(self.joint_names, self.q, self.q_dot):
-            drake_idx = self.plant_joint_indices[name]
-            current_positions[drake_idx] = pos
-            current_velocities[drake_idx] = vel
+        # for name, pos, vel in zip(self.joint_names, self.q, self.q_dot):
+        #     drake_idx = self.plant_joint_indices[name]
+        #     current_positions[drake_idx] = pos
+        #     current_velocities[drake_idx] = vel
         
-        # set the updated states back to context
-        self.plant.SetPositions(self.context, current_positions)
-        self.plant.SetVelocities(self.context, current_velocities)
+        # # set the updated states back to context
+        # self.plant.SetPositions(self.context, current_positions)
+        # self.plant.SetVelocities(self.context, current_velocities)
 
     # TODO: estimate the state based on sensors inputs to replace ground truth
     # provided by gazebo 
