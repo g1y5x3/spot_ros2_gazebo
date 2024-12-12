@@ -2,12 +2,12 @@ import numpy as np
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import JointState
 from scipy.spatial.transform import Rotation as R
+from pydrake.multibody.tree import JointIndex
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.math import RollPitchYaw
 from pydrake.common.eigen_geometry import Quaternion
 
-from pydrake.multibody.tree import JointIndex
 
 class RobotState:
     def __init__(self, model_sdf: str):
@@ -20,7 +20,7 @@ class RobotState:
             'rear_right_hip_x', 'rear_right_hip_y', 'rear_right_knee'
         ]
 
-        # joint states
+        # joint states (following orders in joint_names)
         self.q = np.zeros(12)
         self.q_dot = np.zeros(12)
         
@@ -40,35 +40,37 @@ class RobotState:
         current_positions_names = self.plant.GetPositionNames()
         current_positions = self.plant.GetPositions(self.context)
         print(f"Number of positions: {self.plant.num_positions()}")
-        print(current_positions_names)
-        print(current_positions)
+        print(current_positions_names[7:19])
+        print(current_positions[7:19])
 
         current_velocitiy_names = self.plant.GetVelocityNames()
         current_velocities_names = self.plant.GetVelocities(self.context)
         print(f"Number of velocities: {self.plant.num_velocities()}")
-        print(current_velocitiy_names)
-        print(current_velocities_names)
+        print(current_velocitiy_names[6:18])
+        print(current_velocities_names[6:18])
       
     def update_joints(self, msg: JointState):
+        # print(msg.name)
         for i, name in enumerate(msg.name):
             if name in self.joint_names:
                 idx = self.joint_names.index(name)
+                # print(idx)
                 self.q[idx] = msg.position[i]
                 self.q_dot[idx] = msg.velocity[i]
+        # print(f"length(q) {len(self.q)}")
 
         # drake context return all positions that it tracks internally
         current_positions = self.plant.GetPositions(self.context)
         current_velocities = self.plant.GetVelocities(self.context)
-        print(f"current_position")
+        print(f"current position {current_positions}")
+        print(f"current velocities {current_velocities}")
 
-        # for name, pos, vel in zip(self.joint_names, self.q, self.q_dot):
-        #     drake_idx = self.plant_joint_indices[name]
-        #     current_positions[drake_idx] = pos
-        #     current_velocities[drake_idx] = vel
-        
-        # # set the updated states back to context
-        # self.plant.SetPositions(self.context, current_positions)
-        # self.plant.SetVelocities(self.context, current_velocities)
+        current_positions[7:19] = self.q
+        current_velocities[6:18] = self.q_dot
+
+        # set the updated states back to context
+        self.plant.SetPositions(self.context, current_positions)
+        self.plant.SetVelocities(self.context, current_velocities)
 
     # TODO: estimate the state based on sensors inputs to replace ground truth
     # provided by gazebo 
@@ -93,11 +95,15 @@ class RobotState:
         
         return np.array([rpy.roll_angle(), rpy.pitch_angle(), rpy.yaw_angle()])
 
+    def update_foot_position(self):
+        # CalcRelativeTransform
+        pass
+
     # update the sensory readings, all 4 foot positions, jacobians, bias
     def update(self, jointstate_msg: JointState, odom_msg: Odometry):
         if jointstate_msg is not None and odom_msg is not None:
-            self.update_joints(jointstate_msg)
             self.update_pose(odom_msg)
+            self.update_joints(jointstate_msg)
 
         # compute foot position
         positions = self.plant.GetPositions(self.context)
