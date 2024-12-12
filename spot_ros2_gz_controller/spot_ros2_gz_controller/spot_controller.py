@@ -1,4 +1,3 @@
-
 from typing import Optional
 from pathlib import Path
 
@@ -83,8 +82,10 @@ class SpotController(Node):
             10
         )
 
+        self.last_jointstate_msg: Optional[JointState] = None
+        self.last_odometry_msg: Optional[Odometry] = None
+
         model_sdf = Path(spot_model_description) / 'models' / 'spot' / 'model.sdf'
-        print(str(model_sdf))
         self.robot_state = RobotState(str(model_sdf))
 
         self.gait_scheduler = GaitScheduler(gait_cycle=0.5, start_time=self.get_clock().now())
@@ -97,10 +98,10 @@ class SpotController(Node):
 
 
     def joint_states_callback(self, msg: JointState):
-        self.robot_state.update_joints(msg)
+        self.last_jointstate_msg = msg
     
     def odometry_callback(self, msg: Odometry):
-        self.robot_state.update_pose(msg)
+        self.last_odometry_msg = msg
 
     def high_level_control_callback(self):
         horizon_steps = 16
@@ -117,8 +118,10 @@ class SpotController(Node):
         # since gazebo is providing the ground truth of robot state, no 
         # estimation is needed.
         # TODO: estimate based on sensor inputs
+        self.robot_state.update(self.last_jointstate_msg, 
+                                self.last_odometry_msg)
+
         # print(f"theta {self.robot_state.theta}")
-        pass
 
     def leg_control_callback(self):
         # publish the JointTrajectory msg

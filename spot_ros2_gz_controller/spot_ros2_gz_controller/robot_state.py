@@ -7,6 +7,8 @@ from pydrake.multibody.plant import MultibodyPlant
 from pydrake.math import RollPitchYaw
 from pydrake.common.eigen_geometry import Quaternion
 
+from pydrake.multibody.tree import JointIndex
+
 class RobotState:
     def __init__(self, model_sdf: str):
 
@@ -28,15 +30,33 @@ class RobotState:
         self.omega = np.zeros(3)    # angular velocity
         self.p_dot = np.zeros(3)    # linear velocity
 
-        # load model sdf to calculate kinematics and dynamics for locomotion 
-        # using drake 
+        # using drake library for kinematics and dynamics calculation
         # https://github.com/RobotLocomotion/drake 
         self.plant = MultibodyPlant(time_step=0.0)
-        Parser(self.plant).AddModels(model_sdf)
+        parser = Parser(self.plant)
+        self.model_instance = parser.AddModels(model_sdf)
         self.plant.Finalize()
-        # Print model statistics
-        print(f"Model loaded with:")
-        print(f"- Num joints: {self.plant.num_joints()}")
+        self.context = self.plant.CreateDefaultContext()
+
+        print(f"Number of positions: {self.plant.num_positions(self.model_instance)}")
+        print(f"Number of velocities: {self.plant.num_velocities(self.model_instance)}")
+        print(f"Number of actuated joints: {self.plant.num_actuated_dofs(self.model_instance)}")
+
+        # Create a mapping of your joint names to Drake's joint indices
+        self.plant_joint_indices = {}
+        for i in range(self.plant.num_joints()):
+            joint = self.plant.get_joint(JointIndex(i))
+            print(joint)
+            if joint.name() in self.joint_names:
+                self.plant_joint_indices[joint.name()] = i
+        print(self.plant_joint_indices)
+
+        # # Print model statistics
+        # print(f"Model SDF {model_sdf} loaded!")
+        # print(f"- Num joints: {self.plant.num_joints()}")
+        # for i in range(self.plant.num_joints()):
+        #     joint = self.plant.get_joint(JointIndex(i))
+        #     print(f"{i}: {joint.name()}")
         
     def update_joints(self, msg: JointState):
         for i, name in enumerate(msg.name):
@@ -44,6 +64,21 @@ class RobotState:
                 idx = self.joint_names.index(name)
                 self.q[idx] = msg.position[i]
                 self.q_dot[idx] = msg.velocity[i]
+
+        # drake context return all positions that it tracks internally
+        current_positions = self.plant.GetPositions(self.context)
+        current_velocities = self.plant.GetVelocities(self.context)
+
+        print(f"current_position {len(current_positions)}")
+
+        for name, pos, vel in zip(self.joint_names, self.q, self.q_dot):
+            drake_idx = self.plant_joint_indices[name]
+            current_positions[drake_idx] = pos
+            current_velocities[drake_idx] = vel
+        
+        # set the updated states back to context
+        self.plant.SetPositions(self.context, current_positions)
+        self.plant.SetVelocities(self.context, current_velocities)
 
     # TODO: estimate the state based on sensors inputs to replace ground truth
     # provided by gazebo 
@@ -68,6 +103,17 @@ class RobotState:
         
         return np.array([rpy.roll_angle(), rpy.pitch_angle(), rpy.yaw_angle()])
 
+    # update the sensory readings, all 4 foot positions, jacobians, bias
+    def update(self, jointstate_msg: JointState, odom_msg: Odometry):
+        if jointstate_msg is not None and odom_msg is not None:
+            self.update_joints(jointstate_msg)
+            self.update_pose(odom_msg)
+
+        # compute foot position
+        positions = self.plant.GetPositions(self.context)
+        # print(len(positions))
+        # print(positions)
+                
     def get_state_vec(self):
         """
         Returns the full 13-dimensional state vector required by the MPC controller.
