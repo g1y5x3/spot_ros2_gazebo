@@ -45,9 +45,9 @@ class RobotState:
 
         current_velocitiy_names = self.plant.GetVelocityNames()
         current_velocities_names = self.plant.GetVelocities(self.context)
-        print(f"Number of velocities: {self.plant.num_velocities()}")
-        print(current_velocitiy_names[6:18])
-        print(current_velocities_names[6:18])
+        # print(f"Number of velocities: {self.plant.num_velocities()}")
+        # print(current_velocitiy_names[6:18])
+        # print(current_velocities_names[6:18])
       
     def update_joints(self, msg: JointState):
         # print(msg.name)
@@ -62,8 +62,8 @@ class RobotState:
         # drake context return all positions that it tracks internally
         current_positions = self.plant.GetPositions(self.context)
         current_velocities = self.plant.GetVelocities(self.context)
-        print(f"current position {current_positions}")
-        print(f"current velocities {current_velocities}")
+        # print(f"current position {current_positions}")
+        # print(f"current velocities {current_velocities}")
 
         current_positions[7:19] = self.q
         current_velocities[6:18] = self.q_dot
@@ -96,8 +96,13 @@ class RobotState:
         return np.array([rpy.roll_angle(), rpy.pitch_angle(), rpy.yaw_angle()])
 
     def update_foot_position(self):
-        # CalcRelativeTransform
-        pass
+        base_frame = self.plant.GetFrameByName("base_link")
+        foot_frame = self.plant.GetFrameByName("front_left_ee")
+
+        foot_position = self.plant.CalcRelativeTransform(self.context, 
+                                         frame_A=base_frame,
+                                         frame_B=foot_frame)
+        print(foot_position)
 
     # update the sensory readings, all 4 foot positions, jacobians, bias
     def update(self, jointstate_msg: JointState, odom_msg: Odometry):
@@ -106,7 +111,7 @@ class RobotState:
             self.update_joints(jointstate_msg)
 
         # compute foot position
-        positions = self.plant.GetPositions(self.context)
+        self.update_foot_position()
         # print(len(positions))
         # print(positions)
                 
