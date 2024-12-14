@@ -115,13 +115,13 @@ class SpotController(Node):
         # print(f"Current Phase: {self.gait_scheduler.current_phase:.3f}\n")
 
     def state_estimation_callback(self):
-        # since gazebo is providing the ground truth of robot state, no 
-        # estimation is needed.
-        # TODO: estimate based on sensor inputs
+        # state estimator
         self.robot_state.update(self.last_jointstate_msg, 
                                 self.last_odometry_msg)
+                            
+        # swing trajectory planner
 
-        # print(f"theta {self.robot_state.theta}")
+        # R^{T}_{i}
 
     def leg_control_callback(self):
         # publish the JointTrajectory msg

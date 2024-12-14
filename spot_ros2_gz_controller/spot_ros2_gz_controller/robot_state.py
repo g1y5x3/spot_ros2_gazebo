@@ -104,6 +104,9 @@ class RobotState:
                                          frame_B=foot_frame)
         print(foot_position)
 
+    def update_foot_jacobian(self):
+        pass
+
     # update the sensory readings, all 4 foot positions, jacobians, bias
     def update(self, jointstate_msg: JointState, odom_msg: Odometry):
         if jointstate_msg is not None and odom_msg is not None:
