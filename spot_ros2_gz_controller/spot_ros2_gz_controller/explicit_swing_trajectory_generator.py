@@ -1,3 +1,4 @@
+# https://github.com/iit-DLSLab/Quadruped-PyMPC/blob/main/quadruped_pympc/helpers/swing_generators/explicit_swing_trajectory_generator.py#L69
 import numpy as np
 import matplotlib.pyplot as plt
 
