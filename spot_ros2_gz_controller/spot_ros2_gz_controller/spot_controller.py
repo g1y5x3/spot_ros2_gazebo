@@ -12,6 +12,7 @@ from std_srvs.srv import Trigger
 
 from .robot_state import RobotState
 from .gait_scheduler import GaitScheduler
+from .swing_trajectory import SwingTrajectory
 
 class SpotController(Node):
     def __init__(self):
@@ -87,7 +88,6 @@ class SpotController(Node):
 
         model_sdf = Path(spot_model_description) / 'models' / 'spot' / 'model.sdf'
         self.robot_state = RobotState(str(model_sdf))
-
         self.gait_scheduler = GaitScheduler(gait_cycle=0.5, start_time=self.get_clock().now())
 
         self.create_timer(1/30, self.high_level_control_callback) 
@@ -115,11 +115,10 @@ class SpotController(Node):
         # print(f"Current Phase: {self.gait_scheduler.current_phase:.3f}\n")
 
     def state_estimation_callback(self):
-        # state estimator
         self.robot_state.update(self.last_jointstate_msg, 
                                 self.last_odometry_msg)
-                            
-        # swing trajectory planner
+
+        # self.swing_trajectory(self.robot_state) 
 
         # R^{T}_{i}
 
