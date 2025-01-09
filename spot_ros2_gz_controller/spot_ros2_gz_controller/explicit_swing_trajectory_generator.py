@@ -17,9 +17,6 @@ class SwingTrajectoryGenerator:
         self.half_swing_period = swing_period / 2
         self.bezier_time_factor = 1 / (swing_period / 2)
 
-
-
-
     def plot_trajectory_3d(self,
                            curve_points: np.ndarray) -> None:
         curve_points = np.array(curve_points)
@@ -116,8 +113,8 @@ if __name__ == "__main__":
     trajectory_generator = SwingTrajectoryGenerator(step_height=step_height, 
                                                     swing_period=swing_period)
 
-    lift_off = np.array([0,0,0])
-    touch_down = np.array([0.0,0,0.0])
+    lift_off = np.array([0.0, 0.0, 0.0])
+    touch_down = np.array([1.0, 0.0, 0.0])
 
     # Generate trajectory points
     simulation_dt = 0.002

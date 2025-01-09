@@ -24,9 +24,10 @@ class RobotState:
         self.q = np.zeros(12)
         self.q_dot = np.zeros(12)
 
-        # foot position, velocities, and jacobians
-        self.foot_pos = np.zeros((4,3))
-        self.foot_vel = np.zeros((4,3))
+        # hip position, foot position, velocities, and jacobians under the robot base frame
+        self.hip_pos = np.zeros((4,3))
+        self.foot_pos = np.zeros((3,4))
+        self.foot_vel = np.zeros((3,4))
         self.foot_J = np.zeros((4,3,3))
 
         # position and orientation states
@@ -34,6 +35,8 @@ class RobotState:
         self.p = np.zeros(3)
         self.omega = np.zeros(3)    # angular velocity
         self.p_dot = np.zeros(3)    # linear velocity
+
+        # hip position, foot position and body velocity w.r.t the world coordinate frame
 
         # using drake library for kinematics and dynamics calculation
         # https://github.com/RobotLocomotion/drake
@@ -119,7 +122,7 @@ class RobotState:
                 frame_B=foot_frame,
                 frame_A=base_frame
             )
-            self.foot_pos[i,:] = foot_position.translation()
+            self.foot_pos[:,i] = foot_position.translation()
 
             # foot jacobian J_i
             foot_jacobian = self.plant.CalcJacobianTranslationalVelocity(
@@ -133,7 +136,7 @@ class RobotState:
             self.foot_J[i] = foot_jacobian[:,i*3+7:i*3+10]
 
             # foot velocity B_v_i
-            self.foot_vel[i,:] = foot_jacobian @ qdot
+            self.foot_vel[:,i] = foot_jacobian @ qdot
 
     # update the sensory readings, all 4 foot positions, jacobians, bias
     def update(self, jointstate_msg: JointState, odom_msg: Odometry):
