@@ -118,6 +118,7 @@ class SpotController(Node):
         self.robot_state.update(self.last_jointstate_msg, 
                                 self.last_odometry_msg)
 
+        # update reference foot position and velocity
         # self.swing_trajectory(self.robot_state) 
 
         # R^{T}_{i}

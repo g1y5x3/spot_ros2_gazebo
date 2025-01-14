@@ -21,11 +21,11 @@ class RobotState:
         ]
 
         # joint states (following orders in joint_names)
-        self.q = np.zeros(12)
-        self.q_dot = np.zeros(12)
+        self.joint_position = np.zeros(12)
+        self.joint_velocity = np.zeros(12)
 
         # hip position, foot position, velocities, and jacobians under the robot base frame
-        self.hip_pos = np.zeros((4,3))
+        self.hip_pos  = np.zeros((3,4))
         self.foot_pos = np.zeros((3,4))
         self.foot_vel = np.zeros((3,4))
         self.foot_J = np.zeros((4,3,3))
@@ -36,7 +36,8 @@ class RobotState:
         self.omega = np.zeros(3)    # angular velocity
         self.p_dot = np.zeros(3)    # linear velocity
 
-        # hip position, foot position and body velocity w.r.t the world coordinate frame
+        # transformation between the body frame and world coordinate frame
+        self.H_w_base = np.zeros((4,4))
 
         # using drake library for kinematics and dynamics calculation
         # https://github.com/RobotLocomotion/drake
@@ -63,17 +64,15 @@ class RobotState:
             if name in self.joint_names:
                 idx = self.joint_names.index(name)
                 # print(idx)
-                self.q[idx] = msg.position[i]
-                self.q_dot[idx] = msg.velocity[i]
+                self.joint_position[idx] = msg.position[i]
+                self.joint_velocity[idx] = msg.velocity[i]
 
         # drake context return all positions that it tracks internally
         current_positions = self.plant.GetPositions(self.context)
         current_velocities = self.plant.GetVelocities(self.context)
-        # print(f"current position {current_positions}")
-        # print(f"current velocities {current_velocities}")
 
-        current_positions[7:19] = self.q
-        current_velocities[6:18] = self.q_dot
+        current_positions[7:19] = self.joint_position
+        current_velocities[6:18] = self.joint_velocity
 
         # set the updated states back to context
         self.plant.SetPositions(self.context, current_positions)
@@ -104,17 +103,22 @@ class RobotState:
 
     def update_feet(self):
         # TODO: make this part better
-        qdot = np.zeros(19)
-        qdot[7:19] = self.q_dot
+        joint_velocity = np.zeros(19)
+        joint_velocity[7:19] = self.joint_velocity
+
+        base_frame = self.plant.GetFrameByName("base_link")
 
         foot_frames = ["front_left_ee", "front_right_ee",
-                       "rear_left_ee", "rear_right_ee"]
-        base_frame = self.plant.GetFrameByName("base_link")
-        print(base_frame)
+                       "rear_left_ee",  "rear_right_ee"]
+
+        hip_frames  = ["front_left_hip", "front_right_hip",
+                       "rear_left_hip",  "rear_right_hip"]
 
         # B_p_i, B_v_i
         for i in range(4):
             foot_frame = self.plant.GetFrameByName(foot_frames[i])
+
+            hip_frame = self.plant.GetFrameByName(hip_frames[i])
 
             # foot position B_p_i
             foot_position = self.plant.CalcRelativeTransform(
@@ -123,6 +127,14 @@ class RobotState:
                 frame_A=base_frame
             )
             self.foot_pos[:,i] = foot_position.translation()
+
+            # hip position
+            hip_position = self.plant.CalcRelativeTransform(
+                context=self.context,
+                frame_B=hip_frame,
+                frame_A=base_frame
+            )
+            self.hip_pos[:,i] = hip_position.translation()
 
             # foot jacobian J_i
             foot_jacobian = self.plant.CalcJacobianTranslationalVelocity(
@@ -136,15 +148,13 @@ class RobotState:
             self.foot_J[i] = foot_jacobian[:,i*3+7:i*3+10]
 
             # foot velocity B_v_i
-            self.foot_vel[:,i] = foot_jacobian @ qdot
+            self.foot_vel[:,i] = foot_jacobian @ joint_velocity
 
     # update the sensory readings, all 4 foot positions, jacobians, bias
     def update(self, jointstate_msg: JointState, odom_msg: Odometry):
         if jointstate_msg is not None and odom_msg is not None:
-
             self.update_pose(odom_msg)
             self.update_joints(jointstate_msg)
-
             self.update_feet()
 
     def get_state_vec(self):
@@ -176,19 +186,19 @@ class RobotState:
     def __str__(self):
         output = "===== Robot State ===== \n"
         # Group joints by leg
-        fl = f"FL: [{self.q[0]:.3f}, {self.q[1]:.3f},  {self.q[2]:.3f}]"
-        fr = f"FR: [{self.q[3]:.3f}, {self.q[4]:.3f},  {self.q[5]:.3f}]"
-        rl = f"RL: [{self.q[6]:.3f}, {self.q[7]:.3f},  {self.q[8]:.3f}]"
-        rr = f"RR: [{self.q[9]:.3f}, {self.q[10]:.3f}, {self.q[11]:.3f}]"
+        fl = f"FL: [{self.joint_position[0]:.3f}, {self.joint_position[1]:.3f},  {self.joint_position[2]:.3f}]"
+        fr = f"FR: [{self.joint_position[3]:.3f}, {self.joint_position[4]:.3f},  {self.joint_position[5]:.3f}]"
+        rl = f"RL: [{self.joint_position[6]:.3f}, {self.joint_position[7]:.3f},  {self.joint_position[8]:.3f}]"
+        rr = f"RR: [{self.joint_position[9]:.3f}, {self.joint_position[10]:.3f}, {self.joint_position[11]:.3f}]"
 
         output += "joint positions (q):\n"
         output += f"{fl}\n{fr}\n{rl}\n{rr}\n"
 
         # Same format for velocities
-        fl_v = f"FL: [{self.q_dot[0]:.3f}, {self.q_dot[1]:.3f},  {self.q_dot[2]:.3f}]"
-        fr_v = f"FR: [{self.q_dot[3]:.3f}, {self.q_dot[4]:.3f},  {self.q_dot[5]:.3f}]"
-        rl_v = f"RL: [{self.q_dot[6]:.3f}, {self.q_dot[7]:.3f},  {self.q_dot[8]:.3f}]"
-        rr_v = f"RR: [{self.q_dot[9]:.3f}, {self.q_dot[10]:.3f}, {self.q_dot[11]:.3f}]"
+        fl_v = f"FL: [{self.joint_velocity[0]:.3f}, {self.joint_velocity[1]:.3f},  {self.joint_velocity[2]:.3f}]"
+        fr_v = f"FR: [{self.joint_velocity[3]:.3f}, {self.joint_velocity[4]:.3f},  {self.joint_velocity[5]:.3f}]"
+        rl_v = f"RL: [{self.joint_velocity[6]:.3f}, {self.joint_velocity[7]:.3f},  {self.joint_velocity[8]:.3f}]"
+        rr_v = f"RR: [{self.joint_velocity[9]:.3f}, {self.joint_velocity[10]:.3f}, {self.joint_velocity[11]:.3f}]"
 
         output += "\njoint velocities (q_dot):\n"
         output += f"{fl_v}\n{fr_v}\n{rl_v}\n{rr_v}\n"
