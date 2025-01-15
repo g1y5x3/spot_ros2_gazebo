@@ -89,6 +89,7 @@ class SpotController(Node):
         model_sdf = Path(spot_model_description) / 'models' / 'spot' / 'model.sdf'
         self.robot_state = RobotState(str(model_sdf))
         self.gait_scheduler = GaitScheduler(gait_cycle=0.5, start_time=self.get_clock().now())
+        self.swing_trajectory_generator = SwingTrajectory()
 
         self.create_timer(1/30, self.high_level_control_callback) 
         self.create_timer(1/1000.0, self.state_estimation_callback)
@@ -119,7 +120,7 @@ class SpotController(Node):
                                 self.last_odometry_msg)
 
         # update reference foot position and velocity
-        # self.swing_trajectory(self.robot_state) 
+        self.swing_trajectory_generator.update_swingfoot_trajectory(self.robot_state) 
 
         # R^{T}_{i}
 
