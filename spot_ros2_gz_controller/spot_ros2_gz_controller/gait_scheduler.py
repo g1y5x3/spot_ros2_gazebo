@@ -4,7 +4,10 @@ import matplotlib.pyplot as plt
 class GaitScheduler:
     def __init__(self, gait_cycle=0.5, start_time=0, timesteps=16):
         self.gait_cycle = gait_cycle    # in sec
-        self.duty_factor = 0.5  # portion of cycle spent in stance
+        self.duty_factor = 0.5          # portion of cycle spent in stance
+        self.t_stance = self.duty_factor * self.gait_cycle
+        self.t_swing = self.gait_cycle - self.t_stance
+
         self.t_start = start_time
         self.timesteps  = timesteps
 
