@@ -23,8 +23,11 @@ class SwingTrajectory():
         hip_position = robot_state.hip_pos[:,0]
         com_vel = robot_state.p_dot
         
-        print(f"foot position {foot_position} {np.size(foot_position)}")
-        print(f"foot velocity {foot_velocity} {np.size(foot_velocity)}")
-        print(f"hip position {hip_position} {np.size(hip_position)}")
-        print(f"com velocity {com_vel} {np.size(com_vel)}")
+        # print(f"foot position {foot_position} {np.size(foot_position)}")
+        # print(f"foot velocity {foot_velocity} {np.size(foot_velocity)}")
+        # print(f"hip position {hip_position} {np.size(hip_position)}")
+        # print(f"com velocity {com_vel} {np.size(com_vel)}")
+
+    def foot_planner(self, t_stance, H_w_base, p, pdot, pdot_d, foot_position):
+        pass
 

@@ -5,7 +5,7 @@ from scipy.spatial.transform import Rotation as R
 from pydrake.multibody.tree import JointIndex, JacobianWrtVariable
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
-from pydrake.math import RollPitchYaw
+from pydrake.math import RollPitchYaw, RigidTransform
 from pydrake.common.eigen_geometry import Quaternion
 
 
@@ -30,11 +30,13 @@ class RobotState:
         self.foot_vel = np.zeros((3,4))
         self.foot_J = np.zeros((4,3,3))
 
-        # position and orientation states
-        self.theta = np.zeros(3)
+        # position
         self.p = np.zeros(3)
-        self.omega = np.zeros(3)    # angular velocity
         self.p_dot = np.zeros(3)    # linear velocity
+
+        # orientation
+        self.theta = np.zeros(3)
+        self.omega = np.zeros(3)    # angular velocity
 
         # transformation between the body frame and world coordinate frame
         self.H_w_base = np.zeros((4,4))
@@ -83,23 +85,33 @@ class RobotState:
     def update_pose(self, msg: Odometry):
         # position and pose velocity
         p = msg.pose.pose.position
-        v = msg.twist.twist.linear
+        pdot = msg.twist.twist.linear
 
         self.p = np.array([p.x, p.y, p.z])
-        self.p_dot = np.array([v.x, v.y, v.z])
+        self.p_dot = np.array([pdot.x, pdot.y, pdot.z])
 
         # orientation and angular velocity
-        ang_q = msg.pose.pose.orientation
-        ang_vel = msg.twist.twist.angular
+        q = msg.pose.pose.orientation
+        qdot = msg.twist.twist.angular
 
-        self.theta = self.quat_to_euler(ang_q)
-        self.omega = np.array([ang_vel.x, ang_vel.y, ang_vel.z])
+        self.theta = self.quat_to_euler(q)
+        self.omega = np.array([qdot.x, qdot.y, qdot.z])
+
+        # construct a homogeneous transformation matrix from body to world
+        self.H_w_base = self.post_to_homogeneous(p, q)
 
     def quat_to_euler(self, q):
-        drake_quat = Quaternion(w=q.w, x=q.x, y=q.y, z=q.z)
-        rpy = RollPitchYaw(drake_quat.rotation())
+        quat = Quaternion(w=q.w, x=q.x, y=q.y, z=q.z)
+        rpy = RollPitchYaw(quat.rotation())
 
         return np.array([rpy.roll_angle(), rpy.pitch_angle(), rpy.yaw_angle()])
+    
+    def post_to_homogeneous(self, p, q):
+        quat = Quaternion(w=q.w, x=q.x, y=q.y, z=q.z)
+        translation = [p.x, p.y, p.z]
+        T = RigidTransform(quaternion=quat, p=translation)
+
+        return T.GetAsMatrix4()
 
     def update_feet(self):
         # TODO: make this part better
