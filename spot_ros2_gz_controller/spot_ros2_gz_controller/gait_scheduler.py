@@ -4,21 +4,30 @@ import matplotlib.pyplot as plt
 class GaitScheduler:
     def __init__(self, gait_cycle=0.5, start_time=0, timesteps=16):
         self.gait_cycle = gait_cycle    # in sec
-        self.start_time = start_time
+        self.duty_factor = 0.5  # portion of cycle spent in stance
+        self.t_start = start_time
         self.timesteps  = timesteps
 
-        self.duty_factor = 0.5  # portion of cycle spent in stance
+        self.current_gait = 'trot'
         self.phase_offset = {
                   #  FL   FR   RL   RR
             'trot': [0.0, 0.5, 0.5, 0.0]     
         }
 
-        self.current_gait = 'trot'
         self.current_phase = 0.0    # current_phase /in [0,1)
+        self.phase_map = [0.0, 0.0, 0.0, 0.0]   # FL, FR, RL, RR
 
-    def update_phase(self, current_time):
-        elapsed = (current_time - self.start_time).nanoseconds / 1e9
-        self.current_phase = (elapsed % self.gait_cycle) / self.gait_cycle
+    def update_phase(self, t):
+        dt = (t - self.t_start).nanoseconds / 1e9
+        self.current_phase = (dt % self.gait_cycle) / self.gait_cycle
+
+        for leg in range(4):
+            stance_start = self.phase_offset[self.current_gait][leg]
+            self.phase_map[leg] = (self.current_phase - stance_start) % 1.0
+        print(f"phase map {self.phase_map}")
+
+    def get_leg_state(self, leg_idx):
+        return "stance" if self.phase_map[leg_idx] < self.duty_factor else "swing"
 
     def get_contact_schedule(self, horizon_steps):
         """

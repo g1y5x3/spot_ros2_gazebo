@@ -109,18 +109,17 @@ class SpotController(Node):
         # Get current robot state
         current_robot_state = self.robot_state.get_state_vec()
 
-        self.gait_scheduler.update_phase(self.get_clock().now())
         current_contact_schedule = self.gait_scheduler.get_contact_schedule(horizon_steps)
 
 
         # print(f"Current Phase: {self.gait_scheduler.current_phase:.3f}\n")
 
     def state_estimation_callback(self):
-        self.robot_state.update(self.last_jointstate_msg, 
-                                self.last_odometry_msg)
+        # TODO update user inputs
 
-        # update reference foot position and velocity
-        self.swing_trajectory_generator.update_swingfoot_trajectory(self.robot_state) 
+        self.robot_state.update(self.last_jointstate_msg, self.last_odometry_msg)
+        self.gait_scheduler.update_phase(self.get_clock().now())
+        self.swing_trajectory_generator.update_swingfoot_trajectory(self.robot_state, self.gait_scheduler) 
 
         # R^{T}_{i}
 
