@@ -1,0 +1,14 @@
+From: Spot OCS2 Humble compatibility layer
+Subject: [PATCH] Exclude unused perceptive ANYmal examples
+
+The Spot controller does not use the perceptive ANYmal demos. They require
+plane-segmentation packages from elevation_mapping_cupy, so exclude the
+subtree from colcon discovery rather than carrying that unrelated repository.
+
+diff --git a/ocs2_robotic_examples/ocs2_perceptive_anymal/COLCON_IGNORE b/ocs2_robotic_examples/ocs2_perceptive_anymal/COLCON_IGNORE
+new file mode 100644
+--- /dev/null
++++ b/ocs2_robotic_examples/ocs2_perceptive_anymal/COLCON_IGNORE
+@@ -0,0 +1,2 @@
++The Spot controller does not build the perceptive ANYmal examples.
++Those examples require elevation_mapping_cupy plane-segmentation packages.

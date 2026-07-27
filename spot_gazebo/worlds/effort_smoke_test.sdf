@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<sdf version="1.8">
+  <!--
+    Zero-gravity, obstacle-free world for deterministic actuator-sign checks.
+    The normal ocs2_test.sdf world remains the standing / sensor test target.
+  -->
+  <world name="spot_effort_smoke_test">
+    <plugin
+      filename="ignition-gazebo-physics-system"
+      name="ignition::gazebo::systems::Physics"/>
+    <plugin
+      filename="ignition-gazebo-user-commands-system"
+      name="ignition::gazebo::systems::UserCommands"/>
+    <plugin
+      filename="ignition-gazebo-scene-broadcaster-system"
+      name="ignition::gazebo::systems::SceneBroadcaster"/>
+
+    <physics name="deterministic_1khz" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <gravity>0 0 0</gravity>
+
+    <include>
+      <name>spot</name>
+      <pose>0 0 1 0 0 0</pose>
+      <uri>package://spot_description/models/spot</uri>
+    </include>
+  </world>
+</sdf>

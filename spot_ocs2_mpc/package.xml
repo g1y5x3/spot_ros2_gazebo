@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>spot_ocs2_mpc</name>
+  <version>0.1.0</version>
+  <description>Spot-specific OCS2 centroidal MPC integration and references.</description>
+  <maintainer email="maintainers@example.com">OCS2 Spot maintainers</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>python3-setuptools</buildtool_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>ocs2_legged_robot_ros</exec_depend>
+  <exec_depend>ocs2_msgs</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>spot_bringup</exec_depend>
+  <exec_depend>spot_description</exec_depend>
+  <exec_depend>spot_effort_controller</exec_depend>
+  <exec_depend>spot_state_estimator</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

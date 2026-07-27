@@ -1,9 +1,10 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
+from launch.actions import (
+    DeclareLaunchArgument, IncludeLaunchDescription, TimerAction)
 from launch.conditions import IfCondition
+from launch.conditions import UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -24,6 +25,26 @@ def generate_launch_description():
         description='Open RViz.'
     )
 
+    headless = LaunchConfiguration('headless')
+    headless_arg = DeclareLaunchArgument(
+        'headless',
+        default_value='true',
+        description='Run only the Gazebo server (recommended for tests).'
+    )
+
+    champ_arg = DeclareLaunchArgument(
+        'champ',
+        default_value='false',
+        description='Run the legacy CHAMP publisher (diagnostics only; the '
+                    'model is configured for direct effort control).'
+    )
+    simulator_delay = LaunchConfiguration('simulator_delay')
+    simulator_delay_arg = DeclareLaunchArgument(
+        'simulator_delay',
+        default_value='0.0',
+        description='Wall seconds to let bridges/controllers start first.'
+    )
+
     rviz_config_file_arg = DeclareLaunchArgument(
         'rviz_config_file',
         default_value='spot.rviz',
@@ -33,11 +54,12 @@ def generate_launch_description():
     # Setup to launch the simulator and Gazebo world
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
     pkg_spot_gazebo = get_package_share_directory('spot_gazebo')
-    gz_sim = IncludeLaunchDescription(
+    gz_sim_headless = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
             launch_arguments={
                 'gz_args': [
+                    '-r -s ',
                     PathJoinSubstitution([
                         pkg_spot_gazebo, 
                         'worlds',
@@ -45,6 +67,22 @@ def generate_launch_description():
                     ]),
                 ],
             }.items(),
+            condition=IfCondition(headless),
+    )
+    gz_sim_gui = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
+            launch_arguments={
+                'gz_args': [
+                    '-r ',
+                    PathJoinSubstitution([
+                        pkg_spot_gazebo,
+                        'worlds',
+                        world_file
+                    ]),
+                ],
+            }.items(),
+            condition=UnlessCondition(headless),
     )
 
     # Bridge ROS topics and Gazebo messages for establishing communication
@@ -111,6 +149,7 @@ def generate_launch_description():
         remappings=[
             ("/cmd_vel/smooth", "/cmd_vel"),
         ],
+        condition=IfCondition(LaunchConfiguration('champ')),
     )
 
     # Visualize in RViz
@@ -157,11 +196,16 @@ def generate_launch_description():
         world_file_arg,
         rviz_arg,
         rviz_config_file_arg,
-        gz_sim,
+        headless_arg,
+        champ_arg,
+        simulator_delay_arg,
         bridge,
         robot_state_publisher,
         quadruped_controller_node,
         pointcloud_transform,
         thermal_to_rgb,
-        rviz
+        rviz,
+        TimerAction(
+            period=simulator_delay,
+            actions=[gz_sim_headless, gz_sim_gui]),
     ])

@@ -33,3 +33,11 @@ log
 *.exe
 *.out
 *.app
+
+# Python caches and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Pinned upstream source materialized by dependencies/import_ocs2.sh
+third_party/ocs2/

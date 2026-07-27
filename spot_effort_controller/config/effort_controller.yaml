@@ -1,0 +1,33 @@
+spot_effort_backend:
+  ros__parameters:
+    use_sim_time: true
+    publish_rate: 200.0
+    watchdog_timeout: 0.10
+    torque_limit: 60.0
+    rate_limit: 2000.0
+
+spot_standing_controller:
+  ros__parameters:
+    use_sim_time: true
+    control_rate: 200.0
+    state_timeout: 0.10
+    initialization_samples: 10
+    transition_duration: 2.0
+    nominal_joint_position: [
+      0.0, 1.0547305, -1.6795233,
+      0.0, 1.0547305, -1.6795233,
+      0.0, 1.0547305, -1.6795233,
+      0.0, 1.0547305, -1.6795233
+    ]
+    kp: [
+      400.0, 500.0, 500.0,
+      400.0, 500.0, 500.0,
+      400.0, 500.0, 500.0,
+      400.0, 500.0, 500.0
+    ]
+    kd: [
+      15.0, 20.0, 20.0,
+      15.0, 20.0, 20.0,
+      15.0, 20.0, 20.0,
+      15.0, 20.0, 20.0
+    ]

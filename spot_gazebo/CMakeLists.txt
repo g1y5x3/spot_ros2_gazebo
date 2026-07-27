@@ -8,8 +8,20 @@ project(spot_gazebo)
 # The 'set' directive defines a variable (e.g. 'GZ_PLUGIN_VER').
 # Such variables can be used lateron in the CMakeLists.txt file.
 find_package(ament_cmake REQUIRED)
+find_package(ignition-gazebo6 REQUIRED)
 find_package(spot_description REQUIRED)
 
+add_library(spot_initial_joint_position_system SHARED
+  src/initial_joint_position_system.cpp
+)
+target_link_libraries(spot_initial_joint_position_system
+  ignition-gazebo6::ignition-gazebo6
+)
+
+install(
+  TARGETS spot_initial_joint_position_system
+  LIBRARY DESTINATION lib/${PROJECT_NAME}
+)
 
 # Following 'install' directive ensures that the 'worlds' subfolder
 # will be copied to the 'share/spot_gazebo/worlds'

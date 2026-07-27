@@ -14,5 +14,7 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <!-- Let ros_gz_sim resolve package://spot_description/... URIs in SDF. -->
+    <gazebo_ros gazebo_model_path="${prefix}/../"/>
   </export>
 </package>

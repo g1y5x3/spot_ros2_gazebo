@@ -1,0 +1,5 @@
+repositories:
+  ocs2:
+    type: git
+    url: https://github.com/leggedrobotics/ocs2.git
+    version: 243b80b8de5a427d7237136786821723aa4e792a

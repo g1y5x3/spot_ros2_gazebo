@@ -1,0 +1,199 @@
+From: Spot OCS2 Humble compatibility layer
+Subject: [PATCH] Drop example robot assets from the Spot production build
+
+The Spot integration supplies its own URDF and configuration and never loads
+the ANYmal or mobile-manipulator resources in ocs2_robotic_assets. Remove that
+hard production dependency from the three packages in the Spot build closure.
+
+The omitted tests and launch files are upstream ANYmal-specific examples
+whose factory helpers or default URDF paths load ocs2_robotic_assets at
+runtime. Spot's own model, QP, standing, and locomotion tests and launch file
+remain enabled in their owning packages.
+
+diff --git a/ocs2_pinocchio/ocs2_centroidal_model/CMakeLists.txt b/ocs2_pinocchio/ocs2_centroidal_model/CMakeLists.txt
+--- a/ocs2_pinocchio/ocs2_centroidal_model/CMakeLists.txt
++++ b/ocs2_pinocchio/ocs2_centroidal_model/CMakeLists.txt
+@@ -7,7 +7,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ find_package(ament_cmake REQUIRED)
+ find_package(ocs2_core REQUIRED)
+ find_package(ocs2_robotic_tools REQUIRED)
+-find_package(ocs2_robotic_assets REQUIRED)
+ find_package(ocs2_pinocchio_interface REQUIRED)
+ find_package(pinocchio REQUIRED)
+ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+@@ -35,7 +34,6 @@ target_include_directories(${PROJECT_NAME}
+ ament_target_dependencies(${PROJECT_NAME}
+   ocs2_core
+   ocs2_robotic_tools
+-  ocs2_robotic_assets
+   ocs2_pinocchio_interface
+ )
+ target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_PINOCCHIO_FLAGS})
+@@ -66,7 +64,6 @@ ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ ament_export_dependencies(
+   ocs2_core
+   ocs2_robotic_tools
+-  ocs2_robotic_assets
+   ocs2_pinocchio_interface
+   Eigen3
+   Boost
+@@ -74,25 +71,4 @@ ament_export_dependencies(
+   pinocchio
+ )
+ 
+-############
+-# Testing ##
+-############
+-
+-if(BUILD_TESTING)
+-  find_package(ament_cmake_gtest REQUIRED)
+-
+-  ament_add_gtest(${PROJECT_NAME}_test
+-    test/testAnymalCentroidalModel.cpp
+-  )
+-  target_include_directories(${PROJECT_NAME}_test PRIVATE
+-    test/include
+-  )
+-  target_link_libraries(${PROJECT_NAME}_test
+-    gtest_main
+-    ${PROJECT_NAME}
+-    pinocchio::pinocchio
+-  )
+-  target_compile_options(${PROJECT_NAME}_test PRIVATE ${OCS2_PINOCCHIO_FLAGS})
+-endif()
+-
+ ament_package()
+diff --git a/ocs2_pinocchio/ocs2_centroidal_model/package.xml b/ocs2_pinocchio/ocs2_centroidal_model/package.xml
+--- a/ocs2_pinocchio/ocs2_centroidal_model/package.xml
++++ b/ocs2_pinocchio/ocs2_centroidal_model/package.xml
+@@ -14,13 +14,11 @@
+ 
+   <depend>ocs2_core</depend>
+   <depend>ocs2_robotic_tools</depend>
+-  <depend>ocs2_robotic_assets</depend>
+   <depend>ocs2_pinocchio_interface</depend>
+   <depend>pinocchio</depend>
+   <depend>eigen3_cmake_module</depend>
+   <depend>boost</depend>
+ 
+-  <test_depend>ament_cmake_gtest</test_depend>
+   <export>
+     <build_type>ament_cmake</build_type>
+   </export>
+diff --git a/ocs2_robotic_examples/ocs2_legged_robot/CMakeLists.txt b/ocs2_robotic_examples/ocs2_legged_robot/CMakeLists.txt
+--- a/ocs2_robotic_examples/ocs2_legged_robot/CMakeLists.txt
++++ b/ocs2_robotic_examples/ocs2_legged_robot/CMakeLists.txt
+@@ -14,6 +14,5 @@ find_package(ocs2_robotic_tools REQUIRED)
+ find_package(ocs2_pinocchio_interface REQUIRED)
+ find_package(ocs2_centroidal_model REQUIRED)
+-find_package(ocs2_robotic_assets REQUIRED)
+ find_package(pinocchio REQUIRED)
+ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+ find_package(Boost REQUIRED COMPONENTS system filesystem log_setup log)
+@@ -66,6 +65,5 @@ ament_target_dependencies(${PROJECT_NAME}
+   ocs2_robotic_tools
+   ocs2_pinocchio_interface
+   ocs2_centroidal_model
+-  ocs2_robotic_assets
+ )
+ target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_PINOCCHIO_FLAGS})
+@@ -109,34 +107,9 @@ ament_export_dependencies(
+   ocs2_robotic_tools
+   ocs2_pinocchio_interface
+   ocs2_centroidal_model
+-  ocs2_robotic_assets
+   pinocchio
+   Eigen3
+   Boost
+ )
+ 
+-############
+-# Testing ##
+-############
+-
+-if(BUILD_TESTING)
+-  find_package(ament_cmake_gtest REQUIRED)
+-
+-  ament_add_gtest(${PROJECT_NAME}_test
+-    test/AnymalFactoryFunctions.cpp
+-    test/constraint/testEndEffectorLinearConstraint.cpp
+-    test/constraint/testFrictionConeConstraint.cpp
+-    test/constraint/testZeroForceConstraint.cpp
+-  )
+-  target_include_directories(${PROJECT_NAME}_test PRIVATE
+-    test/include
+-    ${PROJECT_BINARY_DIR}/include
+-  )
+-  target_link_libraries(${PROJECT_NAME}_test
+-    gtest_main
+-    ${PROJECT_NAME}
+-  )
+-  target_compile_options(${PROJECT_NAME}_test PRIVATE ${OCS2_PINOCCHIO_FLAGS})
+-endif()
+-
+ ament_package()
+diff --git a/ocs2_robotic_examples/ocs2_legged_robot/package.xml b/ocs2_robotic_examples/ocs2_legged_robot/package.xml
+--- a/ocs2_robotic_examples/ocs2_legged_robot/package.xml
++++ b/ocs2_robotic_examples/ocs2_legged_robot/package.xml
+@@ -18,7 +18,6 @@
+   <depend>ocs2_mpc</depend>
+   <depend>ocs2_sqp</depend>
+   <depend>ocs2_ipm</depend>
+-  <depend>ocs2_robotic_assets</depend>
+   <depend>ocs2_robotic_tools</depend>
+   <depend>ocs2_pinocchio_interface</depend>
+   <depend>ocs2_centroidal_model</depend>
+@@ -27,8 +26,6 @@
+   <depend>eigen3_cmake_module</depend>
+   <depend>boost</depend>
+ 
+-  <test_depend>ament_cmake_gtest</test_depend>
+-
+   <export>
+     <build_type>ament_cmake</build_type>
+   </export>
+diff --git a/ocs2_robotic_examples/ocs2_legged_robot_ros/CMakeLists.txt b/ocs2_robotic_examples/ocs2_legged_robot_ros/CMakeLists.txt
+--- a/ocs2_robotic_examples/ocs2_legged_robot_ros/CMakeLists.txt
++++ b/ocs2_robotic_examples/ocs2_legged_robot_ros/CMakeLists.txt
+@@ -23,6 +23,5 @@ find_package(ocs2_robotic_tools REQUIRED)
+ find_package(ocs2_pinocchio_interface REQUIRED)
+ find_package(ocs2_centroidal_model REQUIRED)
+-find_package(ocs2_robotic_assets REQUIRED)
+ find_package(ocs2_msgs REQUIRED)
+ find_package(ocs2_ros_interfaces REQUIRED)
+ find_package(ocs2_legged_robot REQUIRED)
+@@ -58,7 +57,6 @@ ament_target_dependencies(${PROJECT_NAME}
+   ocs2_robotic_tools
+   ocs2_pinocchio_interface
+   ocs2_centroidal_model
+-  ocs2_robotic_assets
+   ocs2_msgs
+   ocs2_ros_interfaces
+   ocs2_legged_robot
+@@ -129,6 +127,6 @@ install(DIRECTORY include/${PROJECT_NAME}/
+   DESTINATION include/${PROJECT_NAME}
+ )
+-install(DIRECTORY launch rviz
++install(DIRECTORY rviz
+   DESTINATION share/${PROJECT_NAME}
+ )
+ 
+@@ -156,7 +154,6 @@ ament_export_dependencies(
+   ocs2_robotic_tools
+   ocs2_pinocchio_interface
+   ocs2_centroidal_model
+-  ocs2_robotic_assets
+   ocs2_msgs
+   ocs2_ros_interfaces
+   ocs2_legged_robot
+diff --git a/ocs2_robotic_examples/ocs2_legged_robot_ros/package.xml b/ocs2_robotic_examples/ocs2_legged_robot_ros/package.xml
+--- a/ocs2_robotic_examples/ocs2_legged_robot_ros/package.xml
++++ b/ocs2_robotic_examples/ocs2_legged_robot_ros/package.xml
+@@ -30,7 +30,6 @@
+   <depend>ocs2_robotic_tools</depend>
+   <depend>ocs2_pinocchio_interface</depend>
+   <depend>ocs2_centroidal_model</depend>
+-  <depend>ocs2_robotic_assets</depend>
+   <depend>ocs2_msgs</depend>
+   <depend>ocs2_ros_interfaces</depend>
+   <depend>ocs2_legged_robot</depend>

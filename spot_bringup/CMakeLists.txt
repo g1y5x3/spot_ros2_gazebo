@@ -36,6 +36,12 @@ install(PROGRAMS
   RENAME thermal_to_rgb
 )
 
+install(PROGRAMS
+  scripts/effort_smoke_test.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME effort_smoke_test
+)
+
 install(DIRECTORY launch config rviz maps
   DESTINATION share/${PROJECT_NAME}
 )

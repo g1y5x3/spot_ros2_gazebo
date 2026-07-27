@@ -10,6 +10,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>ignition-gazebo6</depend>
   <depend>spot_description</depend>
 
   <test_depend>ament_lint_auto</test_depend>
@@ -18,4 +19,3 @@
     <build_type>ament_cmake</build_type>
   </export>
 </package>
-

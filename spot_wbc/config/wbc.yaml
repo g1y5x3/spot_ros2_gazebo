@@ -1,0 +1,48 @@
+spot_wbc:
+  ros__parameters:
+    use_sim_time: true
+    enable_policy_tracking: true
+    control_rate: 200.0
+    qp_rate: 50.0
+    stance_qp_rate: 10.0
+    initialization_samples: 10
+    state_timeout: 0.20
+    policy_timeout: 0.25
+    startup_transition_duration: 5.0
+    policy_blend_duration: 0.03
+    stance_policy_blend_duration: 2.0
+    torque_limit: 60.0
+    policy_torque_delta_limit: 20.0
+    # Full-stance QP corrections are deliberately small: the high-gain
+    # posture fallback already supports the body, while this bound lets the
+    # OCS2/WBC solution shape torques without upsetting the contact-stiff
+    # Fortress model. Swing modes retain the larger limit above.
+    stance_policy_torque_delta_limit: 2.0
+    degraded_swing_kp: 100.0
+    degraded_swing_kd: 5.0
+    degraded_swing_torque_delta: 20.0
+    friction_coefficient: 1.0
+    maximum_contact_force: 250.0
+    maximum_joint_acceleration: 100.0
+    joint_limit_horizon: 0.05
+    qp_max_iterations: 40
+    qp_tolerance: 0.0001
+    force_tracking_weight: 1.0
+    base_acceleration_weight: 10.0
+    joint_acceleration_weight: 0.2
+    joint_velocity_tracking_gain: 5.0
+    swing_tracking_weight: 10.0
+    acceleration_regularization: 0.001
+    torque_regularization: 0.0001
+    swing_position_gain: 50.0
+    swing_velocity_gain: 10.0
+    base_position_gain: [50.0, 50.0, 50.0]
+    base_velocity_gain: [10.0, 10.0, 10.0]
+    base_orientation_gain: [100.0, 100.0, 50.0]
+    base_angular_velocity_gain: [10.0, 10.0, 10.0]
+    maximum_base_acceleration: 50.0
+    nominal_joint_position: [0.0, 1.0547305, -1.6795233, 0.0, 1.0547305, -1.6795233, 0.0, 1.0547305, -1.6795233, 0.0, 1.0547305, -1.6795233]
+    feedback_kp: [80.0, 100.0, 100.0, 80.0, 100.0, 100.0, 80.0, 100.0, 100.0, 80.0, 100.0, 100.0]
+    feedback_kd: [4.0, 5.0, 5.0, 4.0, 5.0, 5.0, 4.0, 5.0, 5.0, 4.0, 5.0, 5.0]
+    fallback_kp: [400.0, 500.0, 500.0, 400.0, 500.0, 500.0, 400.0, 500.0, 500.0, 400.0, 500.0, 500.0]
+    fallback_kd: [15.0, 20.0, 20.0, 15.0, 20.0, 20.0, 15.0, 20.0, 20.0, 15.0, 20.0, 20.0]

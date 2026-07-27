@@ -1,0 +1,14 @@
+diff --git a/ocs2_robotic_examples/ocs2_legged_robot/src/common/ModelSettings.cpp b/ocs2_robotic_examples/ocs2_legged_robot/src/common/ModelSettings.cpp
+index f5b026f..b47a988 100644
+--- a/ocs2_robotic_examples/ocs2_legged_robot/src/common/ModelSettings.cpp
++++ b/ocs2_robotic_examples/ocs2_legged_robot/src/common/ModelSettings.cpp
+@@ -54,6 +54,9 @@ ModelSettings loadModelSettings(const std::string& filename, const std::string&
+   loadData::loadPtreeValue(pt, modelSettings.verboseCppAd, fieldName + ".verboseCppAd", verbose);
+   loadData::loadPtreeValue(pt, modelSettings.recompileLibrariesCppAd, fieldName + ".recompileLibrariesCppAd", verbose);
+   loadData::loadPtreeValue(pt, modelSettings.modelFolderCppAd, fieldName + ".modelFolderCppAd", verbose);
++  loadData::loadStdVector(filename, fieldName + ".jointNames", modelSettings.jointNames, verbose);
++  loadData::loadStdVector(filename, fieldName + ".contactNames3DoF", modelSettings.contactNames3DoF, verbose);
++  loadData::loadStdVector(filename, fieldName + ".contactNames6DoF", modelSettings.contactNames6DoF, verbose);
+ 
+   if (verbose) {
+     std::cerr << " #### =============================================================================" << std::endl;

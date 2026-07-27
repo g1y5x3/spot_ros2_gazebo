@@ -32,10 +32,30 @@
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "ignition.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
-- ros_topic_name: "/imu/data" # topic name used on real system
+- ros_topic_name: "/spot/imu"
   gz_topic_name: "/model/spot/imu"
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "ignition.msgs.IMU"
+  direction: GZ_TO_ROS
+- ros_topic_name: "/spot/contact/front_left"
+  gz_topic_name: "/model/spot/contact/front_left"
+  ros_type_name: "ros_gz_interfaces/msg/Contacts"
+  gz_type_name: "ignition.msgs.Contacts"
+  direction: GZ_TO_ROS
+- ros_topic_name: "/spot/contact/front_right"
+  gz_topic_name: "/model/spot/contact/front_right"
+  ros_type_name: "ros_gz_interfaces/msg/Contacts"
+  gz_type_name: "ignition.msgs.Contacts"
+  direction: GZ_TO_ROS
+- ros_topic_name: "/spot/contact/rear_left"
+  gz_topic_name: "/model/spot/contact/rear_left"
+  ros_type_name: "ros_gz_interfaces/msg/Contacts"
+  gz_type_name: "ignition.msgs.Contacts"
+  direction: GZ_TO_ROS
+- ros_topic_name: "/spot/contact/rear_right"
+  gz_topic_name: "/model/spot/contact/rear_right"
+  ros_type_name: "ros_gz_interfaces/msg/Contacts"
+  gz_type_name: "ignition.msgs.Contacts"
   direction: GZ_TO_ROS
 - ros_topic_name: "/spot/camera/thermal_camera"
   gz_topic_name: "/model/spot/thermal_camera"

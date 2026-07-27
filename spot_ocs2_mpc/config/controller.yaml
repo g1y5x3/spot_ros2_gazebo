@@ -1,0 +1,36 @@
+spot_ocs2_observation_bridge:
+  ros__parameters:
+    use_sim_time: true
+    reset_retry_period: 0.5
+    diagnostic_rate: 2.0
+    # Measured at 10 Hz after 30--50 Hz caused policy churn in the
+    # non-real-time container. OCS2 solve time remains below 1 ms.
+    observation_rate: 10.0
+
+spot_cmd_vel_reference:
+  ros__parameters:
+    use_sim_time: true
+    publish_rate: 20.0
+    horizon: 0.6
+    command_timeout: 0.5
+    max_vx: 0.05
+    max_vy: 0.03
+    max_wz: 0.10
+    max_ax: 0.03
+    max_ay: 0.02
+    max_aw: 0.05
+    nominal_height: 0.48
+    default_joint_position: [
+      0.0, 1.0547305, -1.6795233,
+      0.0, 1.0547305, -1.6795233,
+      0.0, 1.0547305, -1.6795233,
+      0.0, 1.0547305, -1.6795233
+    ]
+
+spot_gait_manager:
+  ros__parameters:
+    use_sim_time: true
+    command_timeout: 0.5
+    motion_threshold: 0.001
+    stationary_gait: stance
+    moving_gait: conservative_crawl

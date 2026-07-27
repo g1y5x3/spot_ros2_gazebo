@@ -1,0 +1,19 @@
+From: Spot OCS2 Humble compatibility layer
+Subject: [PATCH] ocs2_core: qualify size_t in trapezoidal integration
+
+Ubuntu 22.04's standard-library include ordering does not make the global
+size_t alias available through <vector>. Use the standard namespace explicitly.
+
+diff --git a/ocs2_core/include/ocs2_core/integration/TrapezoidalIntegration.h b/ocs2_core/include/ocs2_core/integration/TrapezoidalIntegration.h
+index 68a871dc..b0bc0708 100644
+--- a/ocs2_core/include/ocs2_core/integration/TrapezoidalIntegration.h
++++ b/ocs2_core/include/ocs2_core/integration/TrapezoidalIntegration.h
+@@ -48,7 +48,7 @@ VALUE_T trapezoidalIntegration(const std::vector<SCALAR_T>& timeTrajectory, const
+     return initialValue;
+   }
+ 
+-  for (size_t k = 1; k < timeTrajectory.size(); k++) {
++  for (std::size_t k = 1; k < timeTrajectory.size(); k++) {
+     auto temp = valueTrajectory[k - 1] + valueTrajectory[k];
+     temp *= (0.5 * (timeTrajectory[k] - timeTrajectory[k - 1]));
+     initialValue += temp;

@@ -110,7 +110,7 @@
           </mesh>
         </geometry>
       </collision>
-      <visual name="payload_base">
+      <visual name="payload_base_visual">
         <geometry>
           <mesh>
             <uri>package://spot_description/models/spot/meshes/PPV4_Sim_Base.STL</uri>
@@ -130,7 +130,7 @@
           </mesh>
         </geometry>
       </collision>
-      <visual name="payload_birdcage">
+      <visual name="payload_birdcage_visual">
         <geometry>
           <mesh>
             <uri>package://spot_description/models/spot/meshes/birdcage.STL</uri>
@@ -914,6 +914,7 @@
       <parent>base_link</parent>
       <axis>
         <xyz>1 0 0</xyz>
+        <initial_position>0</initial_position>
         <limit>
           <lower>-0.785398</lower>
           <upper>0.785398</upper>
@@ -960,6 +961,7 @@
       <parent>front_left_hip</parent>
       <axis>
         <xyz>0 1 0</xyz>
+        <initial_position>1.0547305</initial_position>
         <limit>
           <lower>-0.898845</lower>
           <upper>2.29511</upper>
@@ -978,7 +980,7 @@
         <pose>0 0 -0.16 0 -0 0</pose>
         <mass>0.5</mass>
         <inertia>
-          <ixx>0.00743438Source Control</ixx>
+          <ixx>0.00743438</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
           <iyy>0.00740104</iyy>
@@ -1043,8 +1045,10 @@
         <contact>
           <collision>front_left_lower_leg_collision</collision>
           <collision>front_left_lower_leg_collision_1</collision>
-          <topic>__default_topic__</topic>
+          <topic>/model/spot/contact/front_left</topic>
         </contact>
+        <always_on>true</always_on>
+        <update_rate>200</update_rate>
       </sensor>
     </link>
     <joint name="front_left_knee" type="revolute">
@@ -1052,6 +1056,7 @@
       <parent>front_left_upper_leg</parent>
       <axis>
         <xyz>0 1 0</xyz>
+        <initial_position>-1.6795233</initial_position>
         <limit>
           <lower>-2.7929</lower>
           <upper>-0.254801</upper>
@@ -1135,6 +1140,7 @@
       <parent>base_link</parent>
       <axis>
         <xyz>1 0 0</xyz>
+        <initial_position>0</initial_position>
         <limit>
           <lower>-0.785398</lower>
           <upper>0.785398</upper>
@@ -1181,6 +1187,7 @@
       <parent>front_right_hip</parent>
       <axis>
         <xyz>0 1 0</xyz>
+        <initial_position>1.0547305</initial_position>
         <limit>
           <lower>-0.898845</lower>
           <upper>2.29511</upper>
@@ -1264,8 +1271,10 @@
         <contact>
           <collision>front_right_lower_leg_collision</collision>
           <collision>front_right_lower_leg_collision_1</collision>
-          <topic>__default_topic__</topic>
+          <topic>/model/spot/contact/front_right</topic>
         </contact>
+        <always_on>true</always_on>
+        <update_rate>200</update_rate>
       </sensor>
     </link>
     <joint name="front_right_knee" type="revolute">
@@ -1273,6 +1282,7 @@
       <parent>front_right_upper_leg</parent>
       <axis>
         <xyz>0 1 0</xyz>
+        <initial_position>-1.6795233</initial_position>
         <limit>
           <lower>-2.7929</lower>
           <upper>-0.254801</upper>
@@ -1458,6 +1468,7 @@
       <parent>base_link</parent>
       <axis>
         <xyz>1 0 0</xyz>
+        <initial_position>0</initial_position>
         <limit>
           <lower>-0.785398</lower>
           <upper>0.785398</upper>
@@ -1504,6 +1515,7 @@
       <parent>rear_left_hip</parent>
       <axis>
         <xyz>0 1 0</xyz>
+        <initial_position>1.0547305</initial_position>
         <limit>
           <lower>-0.898845</lower>
           <upper>2.29511</upper>
@@ -1587,8 +1599,10 @@
         <contact>
           <collision>rear_left_lower_leg_collision</collision>
           <collision>rear_left_lower_leg_collision_1</collision>
-          <topic>__default_topic__</topic>
+          <topic>/model/spot/contact/rear_left</topic>
         </contact>
+        <always_on>true</always_on>
+        <update_rate>200</update_rate>
       </sensor>
     </link>
     <joint name="rear_left_knee" type="revolute">
@@ -1596,6 +1610,7 @@
       <parent>rear_left_upper_leg</parent>
       <axis>
         <xyz>0 1 0</xyz>
+        <initial_position>-1.6795233</initial_position>
         <limit>
           <lower>-2.7929</lower>
           <upper>-0.254801</upper>
@@ -1678,6 +1693,7 @@
       <parent>base_link</parent>
       <axis>
         <xyz>1 0 0</xyz>
+        <initial_position>0</initial_position>
         <limit>
           <lower>-0.785398</lower>
           <upper>0.785398</upper>
@@ -1724,6 +1740,7 @@
       <parent>rear_right_hip</parent>
       <axis>
         <xyz>0 1 0</xyz>
+        <initial_position>1.0547305</initial_position>
         <limit>
           <lower>-0.898845</lower>
           <upper>2.29511</upper>
@@ -1807,8 +1824,10 @@
         <contact>
           <collision>rear_right_lower_leg_collision</collision>
           <collision>rear_right_lower_leg_collision_1</collision>
-          <topic>__default_topic__</topic>
+          <topic>/model/spot/contact/rear_right</topic>
         </contact>
+        <always_on>true</always_on>
+        <update_rate>200</update_rate>
       </sensor>
     </link>
     <joint name="rear_right_knee" type="revolute">
@@ -1816,6 +1835,7 @@
       <parent>rear_right_upper_leg</parent>
       <axis>
         <xyz>0 1 0</xyz>
+        <initial_position>-1.6795233</initial_position>
         <limit>
           <lower>-2.7929</lower>
           <upper>-0.254801</upper>
@@ -1893,65 +1913,71 @@
       name="ignition::gazebo::systems::JointTrajectoryController">
       <topic>model/spot/joint_trajectory</topic>
 
+      <!--
+        Fortress 6 always sums its internal position and velocity PID outputs
+        with JointTrajectoryPoint.effort, even when position and velocity arrays
+        are empty. Keep all internal gains at zero so this plugin is a single,
+        direct effort backend for the standalone controller.
+      -->
       <joint_name>front_left_hip_x</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>front_left_hip_y</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>front_left_knee</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>front_right_hip_x</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>front_right_hip_y</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>front_right_knee</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>rear_left_hip_x</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>rear_left_hip_y</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>rear_left_knee</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>rear_right_hip_x</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>rear_right_hip_y</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
 
       <joint_name>rear_right_knee</joint_name>
-      <position_p_gain>500</position_p_gain>
-      <position_i_gain>1</position_i_gain>
-      <position_d_gain>20</position_d_gain>
+      <position_p_gain>0</position_p_gain>
+      <position_i_gain>0</position_i_gain>
+      <position_d_gain>0</position_d_gain>
     </plugin>
 
   </model>

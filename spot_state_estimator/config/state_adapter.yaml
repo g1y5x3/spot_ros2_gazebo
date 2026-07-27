@@ -1,0 +1,8 @@
+spot_state_adapter:
+  ros__parameters:
+    use_sim_time: true
+    publish_rate: 100.0
+    # Gazebo ground-truth odometry publishes at 10 Hz. Permit one period of
+    # skew while rejecting sources older than two periods.
+    max_age: 0.20
+    max_skew: 0.11

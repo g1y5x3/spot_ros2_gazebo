@@ -1,0 +1,360 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+    <world name="empty_room">
+        <plugin
+            filename="ignition-gazebo-physics-system"
+            name="ignition::gazebo::systems::Physics">
+        </plugin>
+
+        <plugin
+            filename="ignition-gazebo-contact-system"
+            name="ignition::gazebo::systems::Contact">
+        </plugin>
+
+        <plugin
+            filename="ignition-gazebo-sensors-system"
+            name="ignition::gazebo::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+
+        <plugin
+            filename="ignition-gazebo-scene-broadcaster-system"
+            name="ignition::gazebo::systems::SceneBroadcaster">
+        </plugin>
+
+        <plugin
+            filename="ignition-gazebo-user-commands-system"
+            name="ignition::gazebo::systems::UserCommands">
+        </plugin>
+
+        <gui fullscreen="0">
+            <plugin filename="MinimalScene" name="3D View">
+                <ignition-gui>
+                    <title>3D View</title>
+                    <property type="bool" key="showTitleBar">false</property>
+                    <property type="string" key="state">docked</property>
+                </ignition-gui>
+
+                <engine>ogre2</engine>
+                <scene>scene</scene>
+                <camera_pose>-2.8036446571350098 -3.2577419281005859 1.596643328666687 -0.00002 0.612 0.591</camera_pose>
+            </plugin>
+
+            <plugin filename="EntityContextMenuPlugin" name="Entity context menu">
+                <ignition-gui>
+                    <property key="state" type="string">floating</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </ignition-gui>
+            </plugin>
+            <plugin filename="GzSceneManager" name="Scene Manager">
+                <ignition-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </ignition-gui>
+            </plugin>
+            <plugin filename="InteractiveViewControl" name="Interactive view control">
+                <ignition-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </ignition-gui>
+            </plugin>
+            <plugin filename="CameraTracking" name="Camera Tracking">
+                <ignition-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </ignition-gui>
+            </plugin>
+
+            <plugin filename="WorldControl" name="World control">
+                <ignition-gui>
+                    <title>World control</title>
+                    <property type="bool" key="showTitleBar">false</property>
+                    <property type="bool" key="resizable">false</property>
+                    <property type="double" key="height">72</property>
+                    <property type="double" key="width">121</property>
+                    <property type="double" key="z">1</property>
+
+                    <property type="string" key="state">floating</property>
+                    <anchors target="3D View">
+                        <line own="left" target="left"/>
+                        <line own="bottom" target="bottom"/>
+                    </anchors>
+                </ignition-gui>
+
+                <play_pause>true</play_pause>
+                <step>true</step>
+                <start_paused>true</start_paused>
+                <use_event>true</use_event>
+            </plugin>
+
+            <plugin filename="WorldStats" name="World stats">
+                <ignition-gui>
+                    <title>World stats</title>
+                    <property type="bool" key="showTitleBar">false</property>
+                    <property type="bool" key="resizable">false</property>
+                    <property type="double" key="height">110</property>
+                    <property type="double" key="width">290</property>
+                    <property type="double" key="z">1</property>
+
+                    <property type="string" key="state">floating</property>
+                    <anchors target="3D View">
+                        <line own="right" target="right"/>
+                        <line own="bottom" target="bottom"/>
+                    </anchors>
+                </ignition-gui>
+
+                <sim_time>true</sim_time>
+                <real_time>true</real_time>
+                <real_time_factor>true</real_time_factor>
+                <iterations>true</iterations>
+            </plugin>
+
+            <plugin filename="ComponentInspector" name="Component inspector">
+                <ignition-gui>
+                    <property type="string" key="state">docked</property>
+                </ignition-gui>
+            </plugin>
+
+            <plugin filename="EntityTree" name="Entity tree">
+                <ignition-gui>
+                    <property type="string" key="state">docked</property>
+                </ignition-gui>
+            </plugin>
+
+            <plugin filename="ImageDisplay" name="Image Display">
+                <ignition-gui>
+                    <title>Thermal camera</title>
+                    <property key="state" type="string">floating</property>
+                    <property key="width" type="double">350</property>
+                    <property key="height" type="double">315</property>
+                </ignition-gui>
+                <topic>model/spot/camera/frontleft_fisheye_image</topic>
+                <topic_picker>false</topic_picker>
+            </plugin>
+
+            <plugin filename="VisualizeLidar" name="Visualize Lidar">
+            </plugin>
+        </gui>
+
+        <physics name="1ms" type="ode">
+            <max_step_size>0.001</max_step_size>
+            <real_time_factor>1.0</real_time_factor>
+        </physics>
+
+        <gravity>0 0 -9.80665</gravity>
+
+        <scene>
+            <ambient>0.5 0.5 0.5 1.0</ambient>
+            <background>0.7 0.7 0.7 1.0</background>
+            <grid>false</grid>
+            <origin_visual>false</origin_visual>
+            <shadows>false</shadows>
+        </scene>
+
+        <atmosphere type="adiabatic">
+            <temperature>288</temperature>
+            <temperature_gradient>0.02</temperature_gradient>
+        </atmosphere>
+
+        <model name="ground_plane">
+            <static>true</static>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                            <size>20 20</size>
+                        </plane>
+                    </geometry>
+                    <surface>
+                        <friction>
+                            <ode>
+                                <mu>0.8</mu>
+                                <mu2>0.8</mu2>
+                            </ode>
+                        </friction>
+                    </surface>
+                </collision>
+                <!-- Primitive perimeter walls follow the visual mesh bounds. -->
+                <collision name="west_wall_collision">
+                    <pose>-4.206801 -1.75 1.524 0 0 0</pose>
+                    <geometry>
+                        <box>
+                            <size>0.16 9.753604 3.048001</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <collision name="east_wall_collision">
+                    <pose>5.546801 -1.75 1.524 0 0 0</pose>
+                    <geometry>
+                        <box>
+                            <size>0.16 9.753604 3.048001</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <collision name="south_wall_collision">
+                    <pose>0.67 -6.626802 1.524 0 0 0</pose>
+                    <geometry>
+                        <box>
+                            <size>9.753602 0.16 3.048001</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <collision name="north_wall_collision">
+                    <pose>0.67 3.126802 1.524 0 0 0</pose>
+                    <geometry>
+                        <box>
+                            <size>9.753602 0.16 3.048001</size>
+                        </box>
+                    </geometry>
+                </collision>
+            </link>
+        </model>
+
+        <model name="indoor_lightmap">
+            <static>true</static>
+            <!--
+              The Fuel mesh places its floor at z=-0.668251 internally.
+              Normalize the walking surface to world z=0 so the controller's
+              configured 0.48 m nominal body height remains meaningful.
+            -->
+            <pose>0 0 0.668251 0 0 0</pose>
+            <link name="base_link">
+                <visual name="Wall_visual">
+                    <geometry>
+                        <mesh>
+                            <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/meshes/indoor_lightmap.dae</uri>
+                            <submesh>
+                                <name>Wall</name>
+                                <center>false</center>
+                            </submesh>
+                        </mesh>
+                    </geometry>
+                    <material>
+                        <diffuse>1.0 1.0 1.0</diffuse>
+                        <specular>0.2 0.2 0.2</specular>
+                        <pbr>
+                            <metal>
+                                <albedo_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/Wall_Albedo.png</albedo_map>
+                                <roughness_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/Wall_Roughness.png</roughness_map>
+                                <environment_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/IndoorCubemap.dds</environment_map>
+                                <light_map uv_set="1">https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/LightmapEqualizeHistogram.png</light_map>
+                                <metalness>0.0</metalness>
+                            </metal>
+                        </pbr>
+                        <!-- fallback to script if no PBR support-->
+                        <script>
+                            <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/scripts/</uri>
+                            <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/</uri>
+                            <name>Indoor/Wall_Diffuse</name>
+                        </script>
+                    </material>
+                </visual>
+                <visual name="Floor_visual">
+                    <!-- Visual-only offset; physical contact remains at z=0. -->
+                    <pose>0 0 -0.015 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/meshes/indoor_lightmap.dae</uri>
+                            <submesh>
+                                <name>Floor</name>
+                                <center>false</center>
+                            </submesh>
+                        </mesh>
+                    </geometry>
+                    <material>
+                        <diffuse>1.0 1.0 1.0</diffuse>
+                        <specular>0.1 0.1 0.1</specular>
+                        <pbr>
+                            <metal>
+                                <albedo_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/Floor_Albedo.png</albedo_map>
+                                <normal_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/Floor_Normal.png</normal_map>
+                                <roughness_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/Floor_Roughness.png</roughness_map>
+                                <environment_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/IndoorCubemap.dds</environment_map>
+                                <light_map uv_set="1">https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/LightmapEqualizeHistogram.png</light_map>
+                                <metalness>0.0</metalness>
+                            </metal>
+                        </pbr>
+                        <!-- fallback to script if no PBR support-->
+                        <script>
+                            <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/scripts/</uri>
+                            <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/</uri>
+                            <name>Indoor/Floor_Diffuse</name>
+                        </script>
+                    </material>
+                </visual>
+                <visual name="CeilingTiles_visual">
+                    <geometry>
+                        <mesh>
+                            <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/meshes/indoor_lightmap.dae</uri>
+                            <submesh>
+                                <name>CeilingTiles</name>
+                                <center>false</center>
+                            </submesh>
+                        </mesh>
+                    </geometry>
+                    <material>
+                        <diffuse>1.0 1.0 1.0</diffuse>
+                        <specular>0.2 0.2 0.2</specular>
+                        <pbr>
+                            <metal>
+                                <albedo_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/CeilingTiles_Albedo.png</albedo_map>
+                                <normal_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/CeilingTiles_Normal.png</normal_map>
+                                <roughness_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/CeilingTiles_Roughness.png</roughness_map>
+                                <emissive_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/CeilingTiles_Emissive.png</emissive_map>
+                                <environment_map>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/IndoorCubemap.dds</environment_map>
+                                <light_map uv_set="1">https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/LightmapEqualizeHistogram.png</light_map>
+                                <metalness>0.01</metalness>
+                            </metal>
+                        </pbr>
+                        <!-- fallback to script if no PBR support-->
+                        <script>
+                            <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/scripts/</uri>
+                            <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/indoor lightmap/1/files/materials/textures/</uri>
+                            <name>Indoor/CeilingTiles_Diffuse</name>
+                        </script>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="spot">
+            <!--
+              The seated-crouch foot collision is approximately 0.32 m below
+              the base. WBC smoothly transitions these joints to its nominal
+              standing posture after state initialization.
+            -->
+            <pose>0.41 -1.14 0.39 0.00 0.00 0.07</pose>
+            <include merge="true">
+                <uri>package://spot_description/models/spot</uri>
+            </include>
+            <plugin
+                filename="libspot_initial_joint_position_system.so"
+                name="spot_gazebo::InitialJointPositionSystem">
+                <joint><name>front_left_hip_x</name><position>0.0</position></joint>
+                <joint><name>front_left_hip_y</name><position>1.25</position></joint>
+                <joint><name>front_left_knee</name><position>-2.10</position></joint>
+                <joint><name>front_right_hip_x</name><position>0.0</position></joint>
+                <joint><name>front_right_hip_y</name><position>1.25</position></joint>
+                <joint><name>front_right_knee</name><position>-2.10</position></joint>
+                <joint><name>rear_left_hip_x</name><position>0.0</position></joint>
+                <joint><name>rear_left_hip_y</name><position>1.25</position></joint>
+                <joint><name>rear_left_knee</name><position>-2.10</position></joint>
+                <joint><name>rear_right_hip_x</name><position>0.0</position></joint>
+                <joint><name>rear_right_hip_y</name><position>1.25</position></joint>
+                <joint><name>rear_right_knee</name><position>-2.10</position></joint>
+            </plugin>
+        </model>
+    </world>
+</sdf>
