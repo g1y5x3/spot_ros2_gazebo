@@ -95,7 +95,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        DeclareLaunchArgument('world_file', default_value='ocs2_test.sdf'),
+        DeclareLaunchArgument('world_file', default_value='empty_room.sdf'),
         DeclareLaunchArgument('headless', default_value='true'),
         DeclareLaunchArgument(
             'enable_policy_tracking', default_value='true'),

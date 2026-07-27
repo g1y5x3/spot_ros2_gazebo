@@ -1,4 +1,7 @@
+#include <algorithm>
 #include <cmath>
+#include <cstdint>
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -11,11 +14,11 @@
 #include "tf2_sensor_msgs/tf2_sensor_msgs.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 
-class PointCloudTransform : public rclcpp::Node
+class GazeboVelodynePointCloudAdapter : public rclcpp::Node
 {
 public:
-  PointCloudTransform()
-  : Node("pointcloud_transform")
+  GazeboVelodynePointCloudAdapter()
+  : Node("gazebo_velodyne_pointcloud_adapter")
   {
     // Declare parameters
     this->declare_parameter("target_frame", "base_link");
@@ -57,10 +60,12 @@ public:
     subscription_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
       input_topic,
       input_qos,
-      std::bind(&PointCloudTransform::pointcloud_callback, this, std::placeholders::_1));
+      std::bind(
+        &GazeboVelodynePointCloudAdapter::pointcloud_callback,
+        this, std::placeholders::_1));
 
     RCLCPP_INFO(this->get_logger(),
-      "PointCloud Transform: %s -> %s (target: %s, scan_rate: %.1f Hz, lines: %d)",
+      "Gazebo Velodyne adapter: %s -> %s (target: %s, scan_rate: %.1f Hz, lines: %d)",
       input_topic.c_str(), output_topic.c_str(), target_frame_.c_str(),
       scan_rate_, num_scan_lines_);
   }
@@ -248,7 +253,7 @@ private:
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<PointCloudTransform>());
+  rclcpp::spin(std::make_shared<GazeboVelodynePointCloudAdapter>());
   rclcpp::shutdown();
   return 0;
 }

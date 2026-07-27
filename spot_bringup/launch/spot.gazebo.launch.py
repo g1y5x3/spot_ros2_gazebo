@@ -43,6 +43,12 @@ def generate_launch_description():
         description='RViz configuration file to use'
     )
 
+    velodyne_adapter_arg = DeclareLaunchArgument(
+        'velodyne_adapter',
+        default_value='false',
+        description='Publish a synthetic Velodyne-compatible point cloud.'
+    )
+
     # Setup to launch the simulator and Gazebo world
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
     pkg_spot_gazebo = get_package_share_directory('spot_gazebo')
@@ -122,11 +128,10 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}]
     )
 
-    # Transform point cloud from lidar_link to base_link for DLO
-    pointcloud_transform = Node(
-        package='spot_bringup',
-        executable='pointcloud_transform',
-        name='pointcloud_transform',
+    velodyne_adapter = Node(
+        package='spot_gazebo',
+        executable='gazebo_velodyne_pointcloud_adapter',
+        name='gazebo_velodyne_pointcloud_adapter',
         output='screen',
         parameters=[{
             'use_sim_time': True,
@@ -137,28 +142,30 @@ def generate_launch_description():
             'num_scan_lines': 16,
             'vertical_fov_min': -15.0,
             'vertical_fov_max': 15.0,
-        }]
+        }],
+        condition=IfCondition(LaunchConfiguration('velodyne_adapter')),
     )
 
-    # Convert thermal camera to RGB for visualization
-    thermal_to_rgb = Node(
-        package='spot_bringup',
-        executable='thermal_to_rgb',
-        name='thermal_to_rgb',
+    thermal_colormap = Node(
+        package='spot_gazebo',
+        executable='thermal_colormap',
+        name='thermal_colormap',
         output='screen',
-        parameters=[{'use_sim_time': True}]
+        parameters=[{'use_sim_time': True}],
+        condition=IfCondition(LaunchConfiguration('rviz')),
     )
 
     return LaunchDescription([
         world_file_arg,
         rviz_arg,
         rviz_config_file_arg,
+        velodyne_adapter_arg,
         headless_arg,
         simulator_delay_arg,
         bridge,
         robot_state_publisher,
-        pointcloud_transform,
-        thermal_to_rgb,
+        velodyne_adapter,
+        thermal_colormap,
         rviz,
         TimerAction(
             period=simulator_delay,

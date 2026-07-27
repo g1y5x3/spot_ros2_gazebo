@@ -378,7 +378,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /spot/camera/thermal_rgb
+        Value: /spot/camera/thermal/colormap
       Value: true
   Enabled: true
   Global Options:

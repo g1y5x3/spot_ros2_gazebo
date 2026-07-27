@@ -14,7 +14,7 @@ def generate_launch_description():
     effort_config = os.path.join(
         effort_share, 'config', 'effort_controller.yaml')
     world_arg = DeclareLaunchArgument(
-        'world_file', default_value='ocs2_test.sdf')
+        'world_file', default_value='empty_room.sdf')
     headless_arg = DeclareLaunchArgument('headless', default_value='true')
 
     simulation = IncludeLaunchDescription(

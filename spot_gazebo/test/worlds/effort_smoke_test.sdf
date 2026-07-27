@@ -2,7 +2,7 @@
 <sdf version="1.8">
   <!--
     Zero-gravity, obstacle-free world for deterministic actuator-sign checks.
-    The normal ocs2_test.sdf world remains the standing / sensor test target.
+    The production empty_room.sdf world remains the standing / sensor target.
   -->
   <world name="spot_effort_smoke_test">
     <plugin

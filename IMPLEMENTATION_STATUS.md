@@ -25,8 +25,8 @@ Later milestones are not treated as started until the preceding gate passes.
 | Requirement | Current evidence |
 |---|---|
 | Documented container build | Ubuntu 22.04/Humble/Fortress Dockerfile and safe Compose commands are in the README; pinned OCS2 clean-source build passed. |
-| Automated tests | 33 test results pass with zero failures, errors, or skips. |
-| Headless Gazebo | `ocs2_test.sdf`, all required controllers, bridges, sensors, and live-state MPC launch successfully. |
+| Automated tests | 40 test results pass with zero failures, errors, or skips. |
+| Headless Gazebo | `empty_room.sdf`, all required controllers, bridges, sensors, and live-state MPC launch successfully. |
 | Torque standing | Standalone and policy-driven WBC standing each pass 30 simulated seconds. |
 | Asynchronous valid OCS2 policy | Upstream SQP publishes finite 24-state/24-input policies at 10 Hz without running in the torque callback. |
 | WBC conversion | The constrained 42-variable QP produces 12 bounded torque commands; live mode-15 QP activity is required by the standing smoke gate. |
@@ -269,9 +269,9 @@ documented above as the manual container checkpoint.
 
 Status: complete on 2026-07-26.
 
-- Added the local `ocs2_test.sdf` headless world and a `headless` launch
-  argument. Fortress 6.18 launched the Spot model without system-plugin load
-  errors.
+- Added a local minimal headless world and a `headless` launch argument.
+  Fortress 6.18 launched the Spot model without system-plugin load errors. The
+  minimal world was later retired after `empty_room.sdf` passed the same gates.
 - Corrected one malformed inertia scalar only after `ign sdf -k` confirmed the
   source was invalid; also made pre-existing duplicate visual names unique.
   Model inertia values, collision shapes, and geometry were otherwise
@@ -288,9 +288,10 @@ Status: complete on 2026-07-26.
   those arrays are empty. All internal PID gains are therefore explicitly zero,
   and the legacy position controller is absent. There is one actuator plugin
   and one ROS publisher on the final effort topic.
-- `ros2 run spot_bringup effort_smoke_test` applies at most 5 Nm for at most one
-  second, requires no competing publisher, leaves position and velocity empty,
-  and explicitly clears effort. In `effort_smoke_test.sdf`, +2 Nm and -2 Nm on
+- `ros2 run spot_gazebo gazebo_effort_smoke_test` applies at most 5 Nm for at
+  most one second, requires no competing publisher, leaves position and velocity
+  empty, and explicitly clears effort. In its test-only zero-gravity fixture,
+  +2 Nm and -2 Nm on
   `front_left_hip_x` produced +2.393 rad/s and -3.891 rad/s velocity changes,
   respectively. The completion re-audit then applied +1 Nm for 0.1 seconds to
   each of the 12 authoritative names in one zero-gravity run; all 12 tests
@@ -763,9 +764,27 @@ creates their node, exposes their launch switch, or passes that switch through
 integrated launches. Current README instructions describe only the effort and
 OCS2/WBC paths.
 
-A repository guard test verifies that all four package directories stay absent,
-active source and documentation contain no stale references, and the Gazebo
-launch description still loads. The resulting `--packages-up-to spot_wbc`
-closure built 24 packages. Tests across bringup and the four controller packages
-reported 33 passing results with zero errors, failures, or skips. The installed
-Gazebo launch argument list contains no legacy-controller switch.
+The resulting `--packages-up-to spot_wbc` closure built 24 packages. Tests
+across bringup, Gazebo, and the four controller packages reported 40 passing
+results with zero errors, failures, or skips. The installed Gazebo launch
+argument list contains no legacy-controller switch.
+
+The same cleanup removed eight inactive navigation launch files, six associated
+parameter/visualization files, and three obsolete RViz profiles from
+`spot_bringup`. A clean package install now exposes only Gazebo and standalone
+standing launch files and simulation bridge/RViz configuration. Navigation
+assets remain owned by the parent workspace and
+can be reintroduced there when their packages are tested.
+
+Simulation sensor adapters now belong to `spot_gazebo`. The original lidar
+adapter was renamed `gazebo_velodyne_pointcloud_adapter` and is disabled by
+default until a Velodyne-compatible consumer is under test. The Python thermal
+visualizer was replaced by the C++ `thermal_colormap` node, which runs only with
+RViz and publishes `/spot/camera/thermal/colormap`. Bringup no longer compiles
+sensor code or depends on PCL, TF sensor transforms, OpenCV, or `cv_bridge`.
+
+Production Gazebo worlds were reduced to the mine, substation, empty room, and
+simple tunnel. Controller launches now default to `empty_room.sdf`. The isolated
+zero-gravity actuator fixture and its smoke-test executable live under
+`spot_gazebo/test` and are installed only when `BUILD_TESTING` is enabled. A
+cold-start fixture run passed the front-left hip sign check at +1 Nm.

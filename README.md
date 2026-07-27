@@ -19,7 +19,7 @@ interfaces, not as a real-robot controller.
 - `spot_wbc`: asynchronous whole-body QP, safe fallback, integrated launches,
   and locomotion smoke test.
 - `spot_bringup`, `spot_description`, and `spot_gazebo`: Fortress launch,
-  model, sensors, contact bridges, and worlds.
+  model, sensors, contact bridges, simulation adapters, and worlds.
 
 ## Reproducible environment and build
 
@@ -138,8 +138,8 @@ Run unit and package integration tests:
 source /opt/ros/humble/setup.bash
 source install/setup.bash
 colcon test --packages-select \
-  spot_bringup spot_effort_controller spot_state_estimator spot_ocs2_mpc \
-  spot_wbc
+  spot_bringup spot_gazebo spot_effort_controller spot_state_estimator \
+  spot_ocs2_mpc spot_wbc
 colcon test-result --verbose
 ```
 
@@ -169,10 +169,17 @@ command for six simulated seconds, publishes zero for three seconds, and
 fails on insufficient signed motion, low body height, excessive tilt,
 non-finite state, missing diagnostics, or an unsafe controller state.
 
-To verify the direct effort path and joint signs, launch the
-`effort_smoke_test.sdf` world, then run `spot_bringup/effort_smoke_test` once
-per joint. It accepts at most 5 Nm for at
-most one second and refuses to run if another ROS publisher owns the command
+To verify the direct effort path and joint signs, launch the test-only world,
+then run the Gazebo-owned smoke test once per joint:
+
+```bash
+ros2 launch spot_bringup spot.gazebo.launch.py \
+  world_file:=test/effort_smoke_test.sdf headless:=true
+ros2 run spot_gazebo gazebo_effort_smoke_test
+```
+
+It accepts at most 5 Nm for at most one second and refuses to run if another
+ROS publisher owns the command
 topic. The full 12-joint command loop is recorded in
 `IMPLEMENTATION_STATUS.md`.
 
