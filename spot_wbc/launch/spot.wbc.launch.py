@@ -28,7 +28,6 @@ def generate_launch_description():
         launch_arguments={
             'world_file': LaunchConfiguration('world_file'),
             'headless': LaunchConfiguration('headless'),
-            'champ': 'false',
             'rviz': 'false',
             'simulator_delay': '2.0',
         }.items(),

@@ -3,9 +3,7 @@
 This workspace provides a conservative torque-control stack for the Spot
 simulation on Ubuntu 22.04, ROS 2 Humble, and Gazebo Fortress. Upstream OCS2
 SQP supplies a centroidal legged-robot policy; a whole-body QP converts that
-policy into 12 bounded joint torques. The original CHAMP simulation remains
-available as a separate legacy path, but it must never run at the same time as
-the effort controller.
+policy into 12 bounded joint torques.
 
 The implementation is simulation-only. It uses Gazebo ground-truth odometry
 and is intended as a clear foundation for future estimator and hardware
@@ -22,8 +20,6 @@ interfaces, not as a real-robot controller.
   and locomotion smoke test.
 - `spot_bringup`, `spot_description`, and `spot_gazebo`: Fortress launch,
   model, sensors, contact bridges, and worlds.
-- `champ`, `champ_base`, `champ_config`, and `champ_msgs`: retained legacy
-  position-control path.
 
 ## Reproducible environment and build
 
@@ -142,7 +138,8 @@ Run unit and package integration tests:
 source /opt/ros/humble/setup.bash
 source install/setup.bash
 colcon test --packages-select \
-  spot_effort_controller spot_state_estimator spot_ocs2_mpc spot_wbc
+  spot_bringup spot_effort_controller spot_state_estimator spot_ocs2_mpc \
+  spot_wbc
 colcon test-result --verbose
 ```
 
@@ -172,9 +169,9 @@ command for six simulated seconds, publishes zero for three seconds, and
 fails on insufficient signed motion, low body height, excessive tilt,
 non-finite state, missing diagnostics, or an unsafe controller state.
 
-To verify the direct effort path and joint signs, launch
-`effort_smoke_test.sdf` with `champ:=false`, then run
-`spot_bringup/effort_smoke_test` once per joint. It accepts at most 5 Nm for at
+To verify the direct effort path and joint signs, launch the
+`effort_smoke_test.sdf` world, then run `spot_bringup/effort_smoke_test` once
+per joint. It accepts at most 5 Nm for at
 most one second and refuses to run if another ROS publisher owns the command
 topic. The full 12-joint command loop is recorded in
 `IMPLEMENTATION_STATUS.md`.
@@ -194,9 +191,9 @@ Gazebo sensors
 
 The backend is the only publisher to `/spot/joint_trajectory`. It emits one
 effort for each joint in FL/FR/RL/RR order, with position and velocity arrays
-empty. Fortress position/velocity PID gains are zero, CHAMP is disabled in
-the OCS2 launches, torques are clamped to ±60 Nm and rate-limited, and a
-0.1-second command watchdog ramps output to zero.
+empty. Fortress position/velocity PID gains are zero, torques are clamped to
+±60 Nm and rate-limited, and a 0.1-second command watchdog ramps output to
+zero.
 
 The WBC torque callback runs at 200 Hz. QP solve work runs in one background
 worker at 10 Hz in four-foot stance and 50 Hz in swing modes. The cached value
@@ -262,23 +259,7 @@ model parameter.
 Detailed milestone commands, measurements, design decisions, and residual
 limitations are recorded in `IMPLEMENTATION_STATUS.md`.
 
-## Legacy CHAMP launch
-
-The pre-existing CHAMP publisher can still be launched for graph and
-diagnostic compatibility:
-
-```bash
-ros2 launch spot_bringup spot.gazebo.launch.py rviz:=false champ:=true
-```
-
-The current model has zero position/velocity PID gains for verified
-effort-only ownership, so this legacy path is not a working locomotion
-controller without restoring a mutually exclusive position-control model.
-Do not start it while `spot.wbc.launch.py`, the standalone standing
-controller, or any other effort publisher is active.
-
 ## Acknowledgements
 
-- [CHAMP](https://github.com/chvmp/champ/tree/ros2)
 - [spot_config](https://github.com/chvmp/robots/tree/master/configs/spot_config)
 - [spot_description](https://github.com/clearpathrobotics/spot_ros)

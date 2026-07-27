@@ -95,7 +95,7 @@ class EffortSmokeTest(Node):
         if self.count_publishers(self.command_topic) != 1:
             self.get_logger().error(
                 'another ROS publisher is active on the command topic; '
-                'launch with champ:=false')
+                'stop it before running this test')
             return False
 
         self.baseline_velocity = self.last_velocity

@@ -3,12 +3,10 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument, IncludeLaunchDescription, TimerAction)
-from launch.conditions import IfCondition
-from launch.conditions import UnlessCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
-from launch_ros.parameter_descriptions import ParameterFile
 
 
 def generate_launch_description():
@@ -32,12 +30,6 @@ def generate_launch_description():
         description='Run only the Gazebo server (recommended for tests).'
     )
 
-    champ_arg = DeclareLaunchArgument(
-        'champ',
-        default_value='false',
-        description='Run the legacy CHAMP publisher (diagnostics only; the '
-                    'model is configured for direct effort control).'
-    )
     simulator_delay = LaunchConfiguration('simulator_delay')
     simulator_delay_arg = DeclareLaunchArgument(
         'simulator_delay',
@@ -117,41 +109,6 @@ def generate_launch_description():
         ]
     )
 
-    # Controller
-    config_path = get_package_share_directory("champ_config")
-    links_config = PathJoinSubstitution([config_path, 'config', 'links', 'links.yaml'])
-    links_param = ParameterFile(param_file=links_config, allow_substs=True)
-
-    joints_config = PathJoinSubstitution([config_path, 'config', 'joints', 'joints.yaml'])
-    joints_param = ParameterFile(param_file=joints_config, allow_substs=True) 
-
-    gait_config = PathJoinSubstitution([config_path, 'config', 'gait', 'gait.yaml'])
-    gait_param = ParameterFile(param_file=gait_config, allow_substs=True) 
-
-    urdf_file = os.path.join(pkg_spot_description, 'models', 'spot', 'model.urdf')
-
-    quadruped_controller_node = Node(
-        package="champ_base",
-        executable="quadruped_controller_node",
-        output="screen",
-        parameters=[
-            {"use_sim_time": True},
-            {"gazebo": True},
-            {"publish_joint_states": False},
-            {"publish_foot_contacts": False},
-            {"publish_joint_control": True},
-            {"joint_controller_topic": "/spot/joint_trajectory"},
-            {"urdf": urdf_file},
-            links_param,
-            joints_param,
-            gait_param
-        ],
-        remappings=[
-            ("/cmd_vel/smooth", "/cmd_vel"),
-        ],
-        condition=IfCondition(LaunchConfiguration('champ')),
-    )
-
     # Visualize in RViz
     rviz = Node(
         package='rviz2',
@@ -197,11 +154,9 @@ def generate_launch_description():
         rviz_arg,
         rviz_config_file_arg,
         headless_arg,
-        champ_arg,
         simulator_delay_arg,
         bridge,
         robot_state_publisher,
-        quadruped_controller_node,
         pointcloud_transform,
         thermal_to_rgb,
         rviz,

@@ -25,14 +25,14 @@ Later milestones are not treated as started until the preceding gate passes.
 | Requirement | Current evidence |
 |---|---|
 | Documented container build | Ubuntu 22.04/Humble/Fortress Dockerfile and safe Compose commands are in the README; pinned OCS2 clean-source build passed. |
-| Automated tests | 29 tests pass with zero failures, errors, skips, or warnings. |
+| Automated tests | 33 test results pass with zero failures, errors, or skips. |
 | Headless Gazebo | `ocs2_test.sdf`, all required controllers, bridges, sensors, and live-state MPC launch successfully. |
 | Torque standing | Standalone and policy-driven WBC standing each pass 30 simulated seconds. |
 | Asynchronous valid OCS2 policy | Upstream SQP publishes finite 24-state/24-input policies at 10 Hz without running in the torque callback. |
 | WBC conversion | The constrained 42-variable QP produces 12 bounded torque commands; live mode-15 QP activity is required by the standing smoke gate. |
 | `/cmd_vel` motion | Fresh forward, lateral, and yaw tests pass in the commanded directions; a combined pulse also passes. |
 | Safe failures | Backend command watchdog reaches exact zero; stale MPC and rejected/infeasible QPs select bounded standing/degraded fallback. |
-| Exclusive command ownership | CHAMP is disabled, SDF PID gains are zero, one effort plugin remains, and runtime publisher counts are one at each boundary. |
+| Exclusive command ownership | Legacy position controllers are absent, SDF PID gains are zero, one effort plugin remains, and runtime publisher counts are one at each boundary. |
 | Documentation | README and this file cover build, launch, architecture, frames, operator commands, tuning, assumptions, evidence, and limitations. |
 
 ## Milestone 0: Baseline and architecture inventory
@@ -75,7 +75,7 @@ colcon --log-base "$baseline_tmp/log-all" build \
 
 Observed result on 2026-07-26:
 
-- Seven packages built: `champ`, `champ_msgs`, `champ_base`, `champ_config`,
+- Seven packages built: four legacy controller packages plus
   `spot_description`, `spot_gazebo`, and `spot_navigation`.
 - `spot_bringup` failed during install because its `CMakeLists.txt` installs a
   nonexistent `spot_bringup/resource` directory:
@@ -89,14 +89,14 @@ Observed result on 2026-07-26:
   launch could not be run. This is the exact pre-existing baseline failure for
   the Milestone 0 launch evidence.
 
-### Existing simulation and CHAMP command path
+### Existing simulation and legacy command path
 
-- `spot_bringup/launch/spot.gazebo.launch.py` includes
-  `ros_gz_sim/launch/gz_sim.launch.py`, launches `ros_gz_bridge`, launches
-  `robot_state_publisher`, and starts CHAMP's
+- The baseline `spot_bringup/launch/spot.gazebo.launch.py` included
+  `ros_gz_sim/launch/gz_sim.launch.py`, launched `ros_gz_bridge` and
+  `robot_state_publisher`, and started the legacy
   `quadruped_controller_node`.
-- `/cmd_vel` is remapped to CHAMP's `cmd_vel/smooth` subscription.
-- CHAMP publishes a 12-position, one-point
+- `/cmd_vel` was remapped to the legacy controller's smoothed subscription.
+- That controller published a 12-position, one-point
   `trajectory_msgs/msg/JointTrajectory` at its controller topic,
   `/spot/joint_trajectory`.
 - `spot_bridge.yaml` bridges that topic to
@@ -169,7 +169,7 @@ Keep the Spot implementation separate from upstream solver sources:
 ### Milestone 0 assumptions and unresolved issues
 
 - `front_*_ee` and `rear_*_ee` are selected as foot frames because they are the
-  fixed end-effector links used by the existing CHAMP link map. This convention
+  fixed end-effector links used by the legacy link map. This convention
   is now authoritative and must not be changed without the escalation required
   by the goal document.
 - The SDF contains suspicious pre-existing text in one inertia scalar
@@ -285,9 +285,9 @@ Status: complete on 2026-07-26.
   `ignition.msgs.JointTrajectoryPoint.effort`.
 - Inspection of the exact Fortress 6.18 source revealed that its trajectory
   plugin always sums position and velocity PID output with effort, even when
-  those arrays are empty. All internal PID gains are therefore explicitly zero
-  and CHAMP is disabled by default. There is one actuator plugin and one ROS
-  publisher on the final effort topic.
+  those arrays are empty. All internal PID gains are therefore explicitly zero,
+  and the legacy position controller is absent. There is one actuator plugin
+  and one ROS publisher on the final effort topic.
 - `ros2 run spot_bringup effort_smoke_test` applies at most 5 Nm for at most one
   second, requires no competing publisher, leaves position and velocity empty,
   and explicitly clears effort. In `effort_smoke_test.sdf`, +2 Nm and -2 Nm on
@@ -309,7 +309,7 @@ Status: complete on 2026-07-26.
   position/effort commands. It enforces a 60 Nm bound, a 2000 Nm/s rate bound,
   and a 0.1 simulated-second command watchdog.
 - The standalone controller waits for ten valid full joint states, rejects
-  stale/non-finite state, smoothly transitions to the CHAMP-derived nominal
+  stale/non-finite state, smoothly transitions to the original nominal
   posture, adds fixed-base Pinocchio gravity compensation, and applies joint
   PD. No OCS2 code is involved.
 - Seven unit tests passed for joint mapping, dimensions, saturation, rate
@@ -708,8 +708,9 @@ were checked from an isolated directory that never contained
 
 - A fresh `import_ocs2.sh` run applied all four patches and matched the
   checked-in OCS2 source changes.
-- The complete `--packages-up-to spot_wbc` closure built successfully:
-  28 packages, including the CHAMP runtime dependencies declared by bringup.
+- The complete `--packages-up-to spot_wbc` closure built 28 packages at the
+  time. After removal of the four legacy runtime packages, the current closure
+  contains 24 packages.
 - No installed package manifest, CMake export, launch file, or ROS package
   index entry in the production OCS2 closure referenced
   `ocs2_robotic_assets`.
@@ -730,8 +731,8 @@ were checked from an isolated directory that never contained
 On 2026-07-27, the broken `.git` indirection was replaced by a real local
 clone of `https://github.com/justyx404/spot_gazebo_ros2.git`. The implementation
 was reconstructed on an uncommitted local `ocs2` branch based on upstream
-`champ` commit `23166d6efd67724edc1ce41e9ee4bb909cf9a2f9`. No implementation
-commit was created or pushed, and no file was staged.
+commit `23166d6efd67724edc1ce41e9ee4bb909cf9a2f9`. No implementation commit was
+created or pushed, and no file was staged.
 
 The pinned OCS2 checkout is now materialized below this repository at
 `third_party/ocs2`. It is deliberately ignored because
@@ -753,3 +754,18 @@ rejected/infeasible swing QP samples handled by the configured safe fallback.
 Before reconstruction, durable copies of the original Spot tree, baseline, and
 workspace-level OCS2 checkout were saved outside the workspace under
 `/home/rosuser/ros2_ws_recovery/spot-ocs2-20260727`.
+
+### Legacy controller removal
+
+On 2026-07-27, the four obsolete position-controller packages were removed
+from the OCS2 branch. Bringup no longer declares their runtime dependencies,
+creates their node, exposes their launch switch, or passes that switch through
+integrated launches. Current README instructions describe only the effort and
+OCS2/WBC paths.
+
+A repository guard test verifies that all four package directories stay absent,
+active source and documentation contain no stale references, and the Gazebo
+launch description still loads. The resulting `--packages-up-to spot_wbc`
+closure built 24 packages. Tests across bringup and the four controller packages
+reported 33 passing results with zero errors, failures, or skips. The installed
+Gazebo launch argument list contains no legacy-controller switch.

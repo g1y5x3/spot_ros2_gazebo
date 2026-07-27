@@ -19,8 +19,6 @@
   <depend>pcl_conversions</depend>
 
   <exec_depend>rclpy</exec_depend>
-  <exec_depend>champ_base</exec_depend>
-  <exec_depend>champ_config</exec_depend>
   <exec_depend>cv_bridge</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>ros_gz_bridge</exec_depend>
@@ -30,6 +28,7 @@
   <exec_depend>spot_gazebo</exec_depend>
   <exec_depend>spot_description</exec_depend>
 
+  <test_depend>ament_cmake_pytest</test_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
