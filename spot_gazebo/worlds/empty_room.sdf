@@ -331,29 +331,30 @@
 
         <model name="spot">
             <!--
-              The seated-crouch foot collision is approximately 0.32 m below
-              the base. WBC smoothly transitions these joints to its nominal
-              standing posture after state initialization.
+              Powered-off, belly-down posture. The base collision rests just
+              above the floor while the maximally folded legs are splayed far
+              enough to avoid lower-leg collision penetration. WBC owns the
+              bounded belly-to-stand transition before enabling its policy.
             -->
-            <pose>0.41 -1.14 0.39 0.00 0.00 0.07</pose>
+            <pose>0.41 -1.14 0.12 0.00 0.00 0.07</pose>
             <include merge="true">
                 <uri>package://spot_description/models/spot</uri>
             </include>
             <plugin
                 filename="libspot_initial_joint_position_system.so"
                 name="spot_gazebo::InitialJointPositionSystem">
-                <joint><name>front_left_hip_x</name><position>0.0</position></joint>
-                <joint><name>front_left_hip_y</name><position>1.25</position></joint>
-                <joint><name>front_left_knee</name><position>-2.10</position></joint>
-                <joint><name>front_right_hip_x</name><position>0.0</position></joint>
-                <joint><name>front_right_hip_y</name><position>1.25</position></joint>
-                <joint><name>front_right_knee</name><position>-2.10</position></joint>
-                <joint><name>rear_left_hip_x</name><position>0.0</position></joint>
-                <joint><name>rear_left_hip_y</name><position>1.25</position></joint>
-                <joint><name>rear_left_knee</name><position>-2.10</position></joint>
-                <joint><name>rear_right_hip_x</name><position>0.0</position></joint>
-                <joint><name>rear_right_hip_y</name><position>1.25</position></joint>
-                <joint><name>rear_right_knee</name><position>-2.10</position></joint>
+                <joint><name>front_left_hip_x</name><position>0.45</position></joint>
+                <joint><name>front_left_hip_y</name><position>1.20</position></joint>
+                <joint><name>front_left_knee</name><position>-2.75</position></joint>
+                <joint><name>front_right_hip_x</name><position>-0.45</position></joint>
+                <joint><name>front_right_hip_y</name><position>1.20</position></joint>
+                <joint><name>front_right_knee</name><position>-2.75</position></joint>
+                <joint><name>rear_left_hip_x</name><position>0.45</position></joint>
+                <joint><name>rear_left_hip_y</name><position>1.20</position></joint>
+                <joint><name>rear_left_knee</name><position>-2.75</position></joint>
+                <joint><name>rear_right_hip_x</name><position>-0.45</position></joint>
+                <joint><name>rear_right_hip_y</name><position>1.20</position></joint>
+                <joint><name>rear_right_knee</name><position>-2.75</position></joint>
             </plugin>
         </model>
     </world>

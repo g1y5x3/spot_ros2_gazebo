@@ -13,11 +13,12 @@ from rclpy.node import Node
 from rclpy.parameter import Parameter
 from rclpy.qos import (
     DurabilityPolicy, HistoryPolicy, QoSProfile, ReliabilityPolicy)
-from std_msgs.msg import Float64MultiArray, String
+from spot_state_interface.msg import CentroidalState
+from std_msgs.msg import String
 
 from .contracts import (
-    INPUT_DIMENSION, STANCE_MODE, standing_target, validate_policy_dimensions,
-    validate_state)
+    INPUT_DIMENSION, STANCE_MODE, state_message_time,
+    state_message_values, standing_target, validate_policy_dimensions)
 
 
 class ObservationBridge(Node):
@@ -51,7 +52,7 @@ class ObservationBridge(Node):
         self.reset_client = self.create_client(
             Reset, '/legged_robot_mpc_reset')
         self.create_subscription(
-            Float64MultiArray, '/spot/ocs2_state', self.on_state, 10)
+            CentroidalState, '/spot/ocs2_state', self.on_state, 10)
         policy_qos = QoSProfile(
             history=HistoryPolicy.KEEP_LAST,
             depth=1,
@@ -117,20 +118,19 @@ class ObservationBridge(Node):
 
     def on_state(self, msg):
         try:
-            state = validate_state(msg.data)
+            state = state_message_values(msg)
+            state_time = state_message_time(msg)
         except (TypeError, ValueError) as error:
             self.reset_error = f'estimator state rejected: {error}'
             return
-        now = self.now_seconds()
         self.last_state = state
-        self.last_state_time = now
+        self.last_state_time = state_time
 
     def publish_observation(self):
         if not self.initialized or self.last_state is None:
             return
-        now = self.now_seconds()
         observation = MpcObservation()
-        observation.time = now
+        observation.time = self.last_state_time
         observation.state.value = list(self.last_state)
         observation.input.value = [0.0] * INPUT_DIMENSION
         observation.mode = STANCE_MODE

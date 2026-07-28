@@ -17,16 +17,20 @@ from rclpy.parameter import Parameter
 from rclpy.qos import (
     DurabilityPolicy, QoSProfile, ReliabilityPolicy)
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Float64MultiArray, String
+from spot_state_interface.msg import CentroidalState
+from std_msgs.msg import String
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 from spot_effort_controller.constants import JOINT_NAMES
 from spot_effort_controller.safety import reorder_joint_state
-from spot_ocs2_mpc.contracts import validate_policy_dimensions, validate_state
+from spot_ocs2_mpc.contracts import (
+    state_message_time, state_message_values, validate_policy_dimensions)
 
 from .qp import WholeBodyQp, stance_flags
 from .safety import (
     apply_policy_correction, policy_is_fresh, select_bounded_torque)
+from .startup import (
+    StartupGate, smooth_posture_target, startup_posture_ready)
 
 
 CONTACT_FRAMES = (
@@ -49,6 +53,8 @@ class WholeBodyControllerNode(Node):
             'stance_policy_torque_delta_limit',
             'degraded_swing_kp', 'degraded_swing_kd',
             'degraded_swing_torque_delta', 'startup_transition_duration',
+            'startup_minimum_height', 'startup_maximum_tilt',
+            'startup_maximum_joint_speed', 'startup_stable_duration',
             'policy_blend_duration', 'stance_policy_blend_duration',
             'friction_coefficient',
             'maximum_contact_force', 'maximum_joint_acceleration',
@@ -89,6 +95,11 @@ class WholeBodyControllerNode(Node):
         self.state_timeout = value('state_timeout')
         self.policy_timeout = value('policy_timeout')
         self.transition_duration = value('startup_transition_duration')
+        self.startup_minimum_height = value('startup_minimum_height')
+        self.startup_maximum_tilt = value('startup_maximum_tilt')
+        self.startup_maximum_joint_speed = value(
+            'startup_maximum_joint_speed')
+        self.startup_gate = StartupGate(value('startup_stable_duration'))
         self.policy_blend_duration = value('policy_blend_duration')
         self.stance_policy_blend_duration = value(
             'stance_policy_blend_duration')
@@ -156,6 +167,8 @@ class WholeBodyControllerNode(Node):
 
         self.state = None
         self.state_time = None
+        self.contacts = None
+        self.contacts_time = None
         self.position = None
         self.velocity = None
         self.joint_time = None
@@ -171,6 +184,9 @@ class WholeBodyControllerNode(Node):
         self.last_result = None
         self.transition_start = None
         self.transition_position = None
+        self.startup_complete = False
+        self.startup_ready = False
+        self.startup_phase = 'waiting_for_state'
         self.policy_blend_start = None
         self.last_qp_time = None
         self.cached_policy_correction = None
@@ -191,7 +207,10 @@ class WholeBodyControllerNode(Node):
         self.diag_pub = self.create_publisher(
             String, '/spot/wbc/diagnostics', 10)
         self.create_subscription(
-            Float64MultiArray, '/spot/ocs2_state', self.on_state, 10)
+            CentroidalState, '/spot/ocs2_state', self.on_state, 10)
+        self.create_subscription(
+            String, '/spot/state_adapter/diagnostics',
+            self.on_state_diagnostics, 10)
         self.create_subscription(
             JointState, '/spot/joint_states', self.on_joints, 20)
         self.create_subscription(
@@ -216,10 +235,25 @@ class WholeBodyControllerNode(Node):
 
     def on_state(self, message):
         try:
-            self.state = np.asarray(validate_state(message.data))
-            self.state_time = self.now_seconds()
+            self.state = np.asarray(state_message_values(message))
+            self.state_time = state_message_time(message)
         except (TypeError, ValueError):
             self.state = None
+            self.state_time = None
+
+    def on_state_diagnostics(self, message):
+        try:
+            payload = json.loads(message.data)
+            contacts = payload['contacts_fl_fr_rl_rr']
+            if (
+                    len(contacts) != 4
+                    or not all(type(value) is bool for value in contacts)):
+                raise ValueError('expected four boolean contact flags')
+            self.contacts = tuple(contacts)
+            self.contacts_time = self.now_seconds()
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+            self.contacts = None
+            self.contacts_time = None
 
     def on_joints(self, message):
         try:
@@ -349,14 +383,16 @@ class WholeBodyControllerNode(Node):
         if self.transition_start is None:
             self.transition_start = now
             self.transition_position = self.position.copy()
-        blend = min(
-            1.0, max(0.0, (now - self.transition_start)
-                     / self.transition_duration))
-        blend = blend * blend * (3.0 - 2.0 * blend)
-        return (
-            self.transition_position
-            + blend * (
-                self.nominal_joint_position - self.transition_position))
+        elapsed = now - self.transition_start
+        if not self.startup_complete:
+            self.startup_phase = (
+                'raise' if elapsed < self.transition_duration
+                else 'stabilize')
+        return smooth_posture_target(
+            self.transition_position,
+            self.nominal_joint_position,
+            elapsed,
+            self.transition_duration)
 
     def fallback(self, nonlinear, target):
         torque = (
@@ -449,25 +485,53 @@ class WholeBodyControllerNode(Node):
             self.last_policy_torque_delta = 0.0
             self.publish_torque(self.fixed_base_fallback(startup_target))
             return
+        estimator_ready = (
+            self.state is not None and self.state_time is not None
+            and policy_is_fresh(
+                now, self.state_time, self.state_timeout))
+        contacts_ready = (
+            self.contacts is not None and self.contacts_time is not None
+            and policy_is_fresh(
+                now, self.contacts_time, self.state_timeout))
         transition_elapsed = now - self.transition_start
-        if transition_elapsed < self.transition_duration:
-            # Keep the model-based policy out of the loop while the posture
-            # controller raises Spot from its initial crouch.  The MPC is
-            # already running and can settle on the live state, but blending
-            # its correction before all four feet support the body makes the
-            # startup transition unnecessarily fragile.
+        if not self.startup_complete:
+            # Keep policy corrections out until the belly-down joint ramp has
+            # finished and measured state confirms a stable four-foot stand.
             self.policy_active = False
             self.current_mode = None
             self.policy_blend_start = None
             self.cached_policy_correction = None
-            self.fallback_reason = (
-                'startup crouch-to-stand transition; fixed-base fallback')
             self.last_policy_torque_delta = 0.0
-            self.publish_torque(self.fixed_base_fallback(startup_target))
-            return
-        estimator_ready = (
-            self.state is not None and self.state_time is not None
-            and now - self.state_time <= self.state_timeout)
+            self.startup_ready = (
+                transition_elapsed >= self.transition_duration
+                and estimator_ready
+                and contacts_ready
+                and startup_posture_ready(
+                    base_height=self.state[8],
+                    roll=self.state[11],
+                    pitch=self.state[10],
+                    joint_velocity=self.velocity,
+                    contacts=self.contacts,
+                    minimum_height=self.startup_minimum_height,
+                    maximum_tilt=self.startup_maximum_tilt,
+                    maximum_joint_speed=self.startup_maximum_joint_speed))
+            if transition_elapsed < self.transition_duration:
+                self.startup_gate.reset()
+                self.fallback_reason = (
+                    'startup belly-to-stand transition; '
+                    'fixed-base fallback')
+            elif not self.startup_gate.update(now, self.startup_ready):
+                self.fallback_reason = (
+                    'startup holding nominal posture; waiting for stable '
+                    'height, attitude, velocity, and four-foot contact')
+            else:
+                self.startup_complete = True
+                self.startup_phase = 'complete'
+                self.get_logger().info(
+                    'belly-down startup complete; policy handoff enabled')
+            if not self.startup_complete:
+                self.publish_torque(self.fixed_base_fallback(startup_target))
+                return
         policy_ready = (
             self.enable_policy_tracking and estimator_ready
             and self.policy is not None
@@ -612,6 +676,10 @@ class WholeBodyControllerNode(Node):
             'status': self.fallback_reason,
             'policy_active': self.policy_active,
             'current_mode': self.current_mode,
+            'startup_complete': self.startup_complete,
+            'startup_ready': self.startup_ready,
+            'startup_phase': self.startup_phase,
+            'startup_contacts_fl_fr_rl_rr': self.contacts,
             'policy_age_sim_seconds': (
                 None if self.policy_time is None
                 else max(0.0, self.now_seconds() - self.policy_time)),

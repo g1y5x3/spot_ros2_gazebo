@@ -21,6 +21,26 @@ def validate_state(values):
     return state
 
 
+def state_message_time(message):
+    """Return a centroidal-state header timestamp in seconds."""
+    value = (
+        float(message.header.stamp.sec)
+        + float(message.header.stamp.nanosec) * 1.0e-9)
+    if not math.isfinite(value) or value < 0.0:
+        raise ValueError('state timestamp is invalid')
+    return value
+
+
+def state_message_values(message):
+    """Flatten a typed centroidal-state message into OCS2 state order."""
+    values = (
+        tuple(message.normalized_momentum)
+        + tuple(message.base_position)
+        + tuple(message.base_ypr)
+        + tuple(message.joint_position))
+    return validate_state(values)
+
+
 def standing_target(values):
     """Return a stationary target without changing current x, y, or yaw."""
     target = list(validate_state(values))

@@ -125,6 +125,7 @@ def test_stale_or_invalid_policy_selects_bounded_fallback():
     assert np.all(np.isfinite(torque))
     assert not policy_is_fresh(10.0, 9.0, 0.25)
     assert policy_is_fresh(10.0, 9.9, 0.25)
+    assert not policy_is_fresh(10.0, 10.1, 0.25)
 
 
 def test_cached_policy_correction_preserves_live_feedback_updates():

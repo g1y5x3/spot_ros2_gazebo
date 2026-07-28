@@ -24,6 +24,7 @@
   <exec_depend>spot_effort_controller</exec_depend>
   <exec_depend>spot_ocs2_mpc</exec_depend>
   <exec_depend>spot_state_estimator</exec_depend>
+  <exec_depend>spot_state_interface</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>
   <test_depend>python3-pytest</test_depend>

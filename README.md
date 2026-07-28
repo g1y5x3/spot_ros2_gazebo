@@ -13,7 +13,10 @@ interfaces, not as a real-robot controller.
 
 - `spot_effort_controller`: transport-independent standing control and the
   sole ROS-to-Gazebo effort backend.
-- `spot_state_estimator`: replaceable 24-state OCS2 adapter.
+- `spot_state_interface`: stamped, fixed-shape centroidal state contract shared
+  by estimation, MPC, and WBC.
+- `spot_state_estimator`: replaceable simulation adapter producing that
+  24-value centroidal state.
 - `spot_ocs2_mpc`: Spot model configuration, live-state/policy bridge,
   `/cmd_vel` reference generator, and gait manager.
 - `spot_wbc`: asynchronous whole-body QP, safe fallback, integrated launches,

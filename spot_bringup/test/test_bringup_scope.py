@@ -57,6 +57,38 @@ def test_only_supported_production_worlds_remain():
     assert {path.name for path in worlds.glob('*.sdf')} == PRODUCTION_WORLDS
 
 
+def test_empty_room_starts_spot_belly_down_with_splayed_legs():
+    world = ET.parse(
+        REPOSITORY_ROOT / 'spot_gazebo/worlds/empty_room.sdf'
+    ).getroot()
+    spot = next(
+        model for model in world.iter('model')
+        if model.get('name') == 'spot')
+    pose = [float(value) for value in spot.findtext('pose').split()]
+    assert 0.11 <= pose[2] <= 0.13
+
+    plugin = next(
+        item for item in spot.findall('plugin')
+        if item.get('name') == 'spot_gazebo::InitialJointPositionSystem')
+    positions = {
+        joint.findtext('name'): float(joint.findtext('position'))
+        for joint in plugin.findall('joint')
+    }
+    for prefix in ('front', 'rear'):
+        assert positions[f'{prefix}_left_hip_x'] == 0.45
+        assert positions[f'{prefix}_right_hip_x'] == -0.45
+        for side in ('left', 'right'):
+            assert positions[f'{prefix}_{side}_hip_y'] == 1.20
+            assert positions[f'{prefix}_{side}_knee'] == -2.75
+
+
+def test_headless_gazebo_uses_egl_rendering():
+    launch_source = (
+        PACKAGE_ROOT / 'launch/spot.gazebo.launch.py'
+    ).read_text()
+    assert "'-r -s --headless-rendering '" in launch_source
+
+
 def test_controller_launches_default_to_empty_room():
     launch_paths = (
         PACKAGE_ROOT / 'launch/spot.standing.launch.py',

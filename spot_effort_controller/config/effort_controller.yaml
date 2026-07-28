@@ -12,7 +12,7 @@ spot_standing_controller:
     control_rate: 200.0
     state_timeout: 0.10
     initialization_samples: 10
-    transition_duration: 2.0
+    transition_duration: 5.0
     nominal_joint_position: [
       0.0, 1.0547305, -1.6795233,
       0.0, 1.0547305, -1.6795233,

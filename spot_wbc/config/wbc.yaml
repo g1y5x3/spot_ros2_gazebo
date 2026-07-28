@@ -9,6 +9,10 @@ spot_wbc:
     state_timeout: 0.20
     policy_timeout: 0.25
     startup_transition_duration: 5.0
+    startup_minimum_height: 0.42
+    startup_maximum_tilt: 0.20
+    startup_maximum_joint_speed: 0.50
+    startup_stable_duration: 0.50
     policy_blend_duration: 0.03
     stance_policy_blend_duration: 2.0
     torque_limit: 60.0

@@ -8,9 +8,10 @@ import rclpy
 from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rclpy.parameter import Parameter
-from std_msgs.msg import Float64MultiArray, String
+from spot_state_interface.msg import CentroidalState
+from std_msgs.msg import String
 
-from .contracts import INPUT_DIMENSION, validate_state
+from .contracts import INPUT_DIMENSION, state_message_values
 from .reference import ReferenceGenerator
 
 
@@ -50,7 +51,7 @@ class CmdVelReferenceNode(Node):
             String, '/spot/reference/diagnostics', 10)
         self.create_subscription(Twist, '/cmd_vel', self.on_command, 10)
         self.create_subscription(
-            Float64MultiArray, '/spot/ocs2_state', self.on_state, 10)
+            CentroidalState, '/spot/ocs2_state', self.on_state, 10)
         self.create_timer(1.0 / self.rate, self.on_timer)
 
     def now_seconds(self):
@@ -68,7 +69,7 @@ class CmdVelReferenceNode(Node):
 
     def on_state(self, message):
         try:
-            self.state = validate_state(message.data)
+            self.state = state_message_values(message)
         except (TypeError, ValueError) as error:
             self.get_logger().warn(f'rejected estimator state: {error}')
             return
